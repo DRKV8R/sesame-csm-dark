@@ -1,0 +1,25 @@
+# Core RunPod and AI dependencies
+runpod>=1.7.6
+torch>=2.2.0
+torchaudio>=2.2.0
+transformers>=4.36.0
+huggingface_hub>=0.20.0
+
+# Audio processing (requires FFmpeg)
+librosa>=0.10.0
+soundfile>=0.12.0
+pydub>=0.25.0
+audioread>=3.0.0
+
+# Scientific computing
+numpy>=1.24.0
+scipy>=1.10.0
+
+# Utilities
+typing-extensions>=4.8.0
+packaging>=23.0
+requests>=2.31.0
+
+# Optional: Enhanced audio processing
+noisereduce>=3.0.0
+webrtcvad>=2.0.0
