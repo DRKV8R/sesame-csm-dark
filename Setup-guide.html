@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RunPod Setup Guide - Sesame CSM 1B</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-black text-white font-geist">
+  <div class="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black">
+    <div class="container mx-auto px-6 py-12">
+      <!-- Header -->
+      <div class="text-center mb-12">
+        <h1 class="text-4xl font-bold mb-4">🚀 RunPod Template Setup</h1>
+        <p class="text-xl text-gray-300">Create your own Sesame CSM 1B template with zero idle costs</p>
+      </div>
+
+      <!-- Quick Deploy -->
+      <div class="bg-red-500/10 border border-red-500/30 rounded-2xl p-8 mb-12">
+        <h2 class="text-2xl font-bold mb-4">Quick Deploy (Recommended)</h2>
+        <p class="text-gray-300 mb-6">Use our pre-built template for instant deployment:</p>
+        <a href="https://runpod.io/console/deploy?template=sesame-csm-voice&image=davidhamilton/sesame-csm:latest&repo=https://github.com/yourusername/sesame-csm-dark" 
+           target="_blank" 
+           class="inline-block bg-red-500 hover:bg-red-600 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all">
+          🚀 Deploy Now
+        </a>
+      </div>
+
+      <!-- Manual Setup Steps -->
+      <div class="space-y-8">
+        <div class="bg-gray-800/50 rounded-2xl p-8">
+          <h2 class="text-2xl font-bold mb-6">Manual Template Creation</h2>
+          
+          <!-- Step 1 -->
+          <div class="border-l-4 border-blue-500 pl-6 mb-8">
+            <h3 class="text-xl font-semibold mb-4">Step 1: Create RunPod Template</h3>
+            <ol class="list-decimal list-inside space-y-2 text-gray-300">
+              <li>Go to RunPod Console → Templates</li>
+              <li>Click "New Template"</li>
+              <li>Enter template name: "Sesame CSM 1B Voice"</li>
+              <li>Set container image: <code class="bg-black/50 px-2 py-1 rounded">davidhamilton/sesame-csm:latest</code></li>
+            </ol>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="border-l-4 border-green-500 pl-6 mb-8">
+            <h3 class="text-xl font-semibold mb-4">Step 2: Configure Settings</h3>
+            <div class="bg-black/30 rounded-lg p-4 mb-4">
+              <h4 class="font-semibold mb-2">Recommended Configuration:</h4>
+              <ul class="space-y-1 text-gray-300">
+                <li>• <strong>Container Disk:</strong> 20GB (ephemeral)</li>
+                <li>• <strong>Volume Disk:</strong> 0GB (no persistent storage needed)</li>
+                <li>• <strong>GPU:</strong> NVIDIA A40 or RTX 4090</li>
+                <li>• <strong>Memory:</strong> 24GB+ RAM</li>
+                <li>• <strong>Idle Timeout:</strong> 60 seconds</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="border-l-4 border-purple-500 pl-6 mb-8">
+            <h3 class="text-xl font-semibold mb-4">Step 3: Environment Variables</h3>
+            <div class="bg-black/30 rounded-lg p-4">
+              <pre class="text-sm"><code>MODEL_REPO=BiggestLab/csm-1b
+DEFAULT_SPEAKER_ID=0
+MAX_LENGTH_MS=30000
+GENERATION_LIMIT=100
+NO_TORCH_COMPILE=1</code></pre>
+            </div>
+          </div>
+
+          <!-- Step 4 -->
+          <div class="border-l-4 border-yellow-500 pl-6">
+            <h3 class="text-xl font-semibold mb-4">Step 4: Deploy & Test</h3>
+            <ol class="list-decimal list-inside space-y-2 text-gray-300">
+              <li>Save template</li>
+              <li>Create serverless endpoint</li>
+              <li>Test with sample request</li>
+              <li>Verify $0.000 idle cost</li>
+            </ol>
+          </div>
+        </div>
+
+        <!-- Cost Information -->
+        <div class="bg-green-500/10 border border-green-500/30 rounded-2xl p-8">
+          <h2 class="text-2xl font-bold mb-4">💰 Cost Breakdown</h2>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="text-center">
+              <div class="text-3xl font-bold text-green-400">$0.000</div>
+              <div class="text-gray-300">Idle Cost</div>
+            </div>
+            <div class="text-center">
+              <div class="text-3xl font-bold text-blue-400">$0.02</div>
+              <div class="text-gray-300">Per Generation</div>
+            </div>
+            <div class="text-center">
+              <div class="text-3xl font-bold text-purple-400">15-30s</div>
+              <div class="text-gray-300">Cold Start</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center pt-8 border-t border-gray-700">
+          <p class="text-gray-400">
+            Created by <strong>David Hamilton 2025</strong> • 
+            <a href="https://github.com/yourusername/sesame-csm-dark" class="text-red-400 hover:text-red-300">View Source Code</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
