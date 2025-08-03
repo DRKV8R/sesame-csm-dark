@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sesame Voice Studio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { geist: ['Geist', 'sans-serif'] },
+          animation: {
+            'float': 'float 6s ease-in-out infinite',
+            'slide-in': 'slideIn 0.3s ease-out',
+            'fade-in': 'fadeIn 0.5s ease-out',
+          },
+          keyframes: {
+            float: { 
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-8px)' }
+            },
+            slideIn: {
+              '0%': { transform: 'translateX(-100%)', opacity: 0 },
+              '100%': { transform: 'translateX(0)', opacity: 1 }
+            },
+            fadeIn: {
+              '0%': { opacity: 0, transform: 'translateY(10px)' },
+              '100%': { opacity: 1, transform: 'translateY(0)' }
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .glass {
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .menu-item:hover { background: rgba(239, 68, 68, 0.1); }
+    .floating-element { animation: float 6s ease-in-out infinite; }
+    .generation-limit { color: #10b981; font-weight: 600; }
+  </style>
+</head>
+<body class="bg-black text-white font-geist min-h-screen">
+  <!-- Navigation Menu -->
+  <nav class="glass fixed top-0 left-0 right-0 z-50 p-4">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <div class="flex items-center space-x-4">
+        <div class="w-8 h-8 bg-red-500 rounded-lg flex items-center justify-center">
+          <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4z"/>
+            <path d="M5.5 9.643a.75.75 0 00-1.5 0V10c0 3.06 2.29 5.585 5.25 5.954V17.5h-1.5a.75.75 0 000 1.5h4.5a.75.75 0 000-1.5H10.5v-1.546A6.001 6.001 0 0016 10v-.357a.75.75 0 00-1.5 0V10a4.5 4.5 0 01-9 0v-.357z"/>
+          </svg>
+        </div>
+        <h1 class="text-xl font-bold">Sesame Voice Studio</h1>
+      </div>
+      
+      <div class="flex items-center space-x-6">
+        <button onclick="showSettings()" class="menu-item px-4 py-2 rounded-lg transition-all">
+          ⚙️ Settings
+        </button>
+        <button onclick="showApiDocs()" class="menu-item px-4 py-2 rounded-lg transition-all">
+          📖 API Docs
+        </button>
+        <button onclick="showUsage()" class="menu-item px-4 py-2 rounded-lg transition-all">
+          📊 Usage
+        </button>
+        <div class="text-sm">
+          <span class="text-gray-400">Generations:</span>
+          <span class="generation-limit" id="generationCount">0/100</span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="pt-20 p-6">
+    <div class="max-w-7xl mx-auto">
+      <!-- Quick Actions -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="glass rounded-2xl p-6 floating-element">
+          <h3 class="text-lg font-semibold mb-2">🎵 Upload Audio</h3>
+          <p class="text-gray-400 text-sm mb-4">Start voice cloning</p>
+          <button onclick="openUploader()" class="w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg transition">
+            Upload
+          </button>
+        </div>
+        
+        <div class="glass rounded-2xl p-6 floating-element">
+          <h3 class="text-lg font-semibold mb-2">🔊 Quick Generate</h3>
+          <p class="text-gray-400 text-sm mb-4">Text to speech</p>
+          <button onclick="openQuickGen()" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg transition">
+            Generate
+          </button>
+        </div>
+        
+        <div class="glass rounded-2xl p-6 floating-element">
+          <h3 class="text-lg font-semibold mb-2">📚 Voice Library</h3>
+          <p class="text-gray-400 text-sm mb-4">Manage voices</p>
+          <button onclick="openLibrary()" class="w-full bg-green-500 hover:bg-green-600 text-white py-2 rounded-lg transition">
+            Browse
+          </button>
+        </div>
+        
+        <div class="glass rounded-2xl p-6 floating-element">
+          <h3 class="text-lg font-semibold mb-2">🚀 Deploy</h3>
+          <p class="text-gray-400 text-sm mb-4">RunPod setup</p>
+          <button onclick="openDeploy()" class="w-full bg-purple-500 hover:bg-purple-600 text-white py-2 rounded-lg transition">
+            Setup
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Workspace -->
+      <div id="workspace" class="glass rounded-2xl p-8 min-h-96">
+        <div class="text-center">
+          <div class="w-20 h-20 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg class="w-10 h-10 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4z"/>
+            </svg>
+          </div>
+          <h2 class="text-2xl font-bold mb-4">Welcome to Voice Studio</h2>
+          <p class="text-gray-400 mb-6">Professional voice cloning with zero idle costs</p>
+          <div class="flex justify-center space-x-4">
+            <button onclick="openUploader()" class="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg transition">
+              Get Started
+            </button>
+            <button onclick="showApiDocs()" class="glass border border-red-500/30 text-white px-6 py-3 rounded-lg transition hover:bg-red-500/10">
+              View Docs
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div id="settingsModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center">
+    <div class="glass rounded-2xl p-8 max-w-md w-full mx-4 animate-fade-in">
+      <div class="flex justify-between items-center mb-6">
+        <h3 class="text-xl font-bold">Settings</h3>
+        <button onclick="closeSettings()" class="text-gray-400 hover:text-white">✕</button>
+      </div>
+      
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium mb-2">RunPod Endpoint</label>
+          <input type="text" id="endpointInput" class="w-full bg-black/50 border border-gray-600 rounded-lg px-4 py-2" placeholder="abc123-def456">
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium mb-2">API Key</label>
+          <input type="password" id="apiKeyInput" class="w-full bg-black/50 border border-gray-600 rounded-lg px-4 py-2" placeholder="Your API key">
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium mb-2">Generation Limit</label>
+          <select id="limitSelect" class="w-full bg-black/50 border border-gray-600 rounded-lg px-4 py-2">
+            <option value="100">100 generations/day</option>
+            <option value="500">500 generations/day</option>
+            <option value="1000">1000 generations/day</option>
+            <option value="unlimited">Unlimited</option>
+          </select>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium mb-2">Auto-save Voice Profiles</label>
+          <input type="checkbox" id="autoSaveCheck" class="rounded" checked>
+        </div>
+      </div>
+      
+      <div class="flex justify-end space-x-4 mt-6">
+        <button onclick="closeSettings()" class="px-4 py-2 text-gray-400 hover:text-white">Cancel</button>
+        <button onclick="saveSettings()" class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Persistent Settings Management
+    class VoiceStudioSettings {
+      constructor() {
+        this.settings = this.loadSettings();
+        this.generationCount = parseInt(localStorage.getItem('generationCount') || '0');
+        this.updateUI();
+      }
+      
+      loadSettings() {
+        const defaults = {
+          endpoint: '',
+          apiKey: '',
+          generationLimit: 100,
+          autoSave: true,
+          maxAudioLength: 30000
+        };
+        
+        const saved = localStorage.getItem('voiceStudioSettings');
+        return saved ? { ...defaults, ...JSON.parse(saved) } : defaults;
+      }
+      
+      saveSettings() {
+        localStorage.setItem('voiceStudioSettings', JSON.stringify(this.settings));
+      }
+      
+      updateUI() {
+        document.getElementById('generationCount').textContent = 
+          `${this.generationCount}/${this.settings.generationLimit === 'unlimited' ? '∞' : this.settings.generationLimit}`;
+      }
+      
+      incrementGeneration() {
+        if (this.settings.generationLimit !== 'unlimited' && 
+            this.generationCount >= this.settings.generationLimit) {
+          alert('Generation limit reached for today!');
+          return false;
+        }
+        this.generationCount++;
+        localStorage.setItem('generationCount', this.generationCount.toString());
+        this.updateUI();
+        return true;
+      }
+    }
+
+    // Global app instance
+    const studioSettings = new VoiceStudioSettings();
+
+    // Menu Functions
+    function showSettings() {
+      document.getElementById('settingsModal').classList.remove('hidden');
+      document.getElementById('endpointInput').value = studioSettings.settings.endpoint;
+      document.getElementById('apiKeyInput').value = studioSettings.settings.apiKey;
+      document.getElementById('limitSelect').value = studioSettings.settings.generationLimit;
+      document.getElementById('autoSaveCheck').checked = studioSettings.settings.autoSave;
+    }
+
+    function closeSettings() {
+      document.getElementById('settingsModal').classList.add('hidden');
+    }
+
+    function saveSettings() {
+      studioSettings.settings.endpoint = document.getElementById('endpointInput').value;
+      studioSettings.settings.apiKey = document.getElementById('apiKeyInput').value;
+      studioSettings.settings.generationLimit = document.getElementById('limitSelect').value;
+      studioSettings.settings.autoSave = document.getElementById('autoSaveCheck').checked;
+      studioSettings.saveSettings();
+      closeSettings();
+      alert('Settings saved successfully!');
+    }
+
+    function showApiDocs() {
+      document.getElementById('workspace').innerHTML = `
+        <div class="animate-fade-in">
+          <h2 class="text-2xl font-bold mb-6">API Documentation</h2>
+          <div class="space-y-6">
+            <div class="glass rounded-lg p-6">
+              <h3 class="text-lg font-semibold mb-4">Generate Speech</h3>
+              <pre class="bg-black/50 rounded-lg p-4 text-sm overflow-x-auto"><code>POST https://api.runpod.ai/v2/{endpoint}/runsync
+
+{
+  "input": {
+    "text": "Hello world!",
+    "speaker_id": 0,
+    "max_length_ms": 10000,
+    "reference_audio": "base64_audio_data",
+    "reference_text": "transcription"
+  }
+}</code></pre>
+            </div>
+            <div class="glass rounded-lg p-6">
+              <h3 class="text-lg font-semibold mb-4">Response Format</h3>
+              <pre class="bg-black/50 rounded-lg p-4 text-sm overflow-x-auto"><code>{
+  "output": {
+    "audio_base64": "UklGRiQ...",
+    "sample_rate": 24000,
+    "format": "wav",
+    "generation_time": 2.34
+  }
+}</code></pre>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function showUsage() {
+      const costPerGeneration = 0.02;
+      const totalCost = (studioSettings.generationCount * costPerGeneration).toFixed(4);
+      
+      document.getElementById('workspace').innerHTML = `
+        <div class="animate-fade-in">
+          <h2 class="text-2xl font-bold mb-6">Usage Statistics</h2>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="glass rounded-lg p-6">
+              <h3 class="text-lg font-semibold mb-2">Generations Today</h3>
+              <p class="text-3xl font-bold text-green-400">${studioSettings.generationCount}</p>
+            </div>
+            <div class="glass rounded-lg p-6">
+              <h3 class="text-lg font-semibold mb-2">Estimated Cost</h3>
+              <p class="text-3xl font-bold text-blue-400">$${totalCost}</p>
+            </div>
+            <div class="glass rounded-lg p-6">
+              <h3 class="text-lg font-semibold mb-2">Idle Cost</h3>
+              <p class="text-3xl font-bold text-red-400">$0.000</p>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function openUploader() {
+      document.getElementById('workspace').innerHTML = `
+        <div class="animate-fade-in">
+          <h2 class="text-2xl font-bold mb-6">Upload Audio for Voice Cloning</h2>
+          <div class="border-2 border-dashed border-gray-600 rounded-lg p-12 text-center">
+            <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+            </svg>
+            <h3 class="text-lg font-semibold mb-2">Drop audio files here</h3>
+            <p class="text-gray-400 mb-4">Supports MP3, WAV, M4A • Max 10MB • Min 30 seconds</p>
+            <button class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg">Browse Files</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function openQuickGen() {
+      document.getElementById('workspace').innerHTML = `
+        <div class="animate-fade-in">
+          <h2 class="text-2xl font-bold mb-6">Quick Text-to-Speech Generation</h2>
+          <div class="space-y-6">
+            <div>
+              <label class="block text-sm font-medium mb-2">Enter text to generate:</label>
+              <textarea class="w-full bg-black/50 border border-gray-600 rounded-lg px-4 py-3 h-32" placeholder="Type your text here..."></textarea>
+            </div>
+            <div class="flex space-x-4">
+              <button onclick="generateSpeech()" class="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg">Generate Speech</button>
+              <button class="glass border border-gray-600 text-white px-6 py-3 rounded-lg">Save as Profile</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function openLibrary() {
+      document.getElementById('workspace').innerHTML = `
+        <div class="animate-fade-in">
+          <h2 class="text-2xl font-bold mb-6">Voice Library</h2>
+          <div class="text-center text-gray-400 py-12">
+            <svg class="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+            </svg>
+            <p>No voice profiles saved yet.</p>
+            <button onclick="openUploader()" class="mt-4 bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg">Create First Profile</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function openDeploy() {
+      window.open('setup-guide.html', '_blank');
+    }
+
+    async function generateSpeech() {
+      if (!studioSettings.incrementGeneration()) return;
+      
+      // Show loading state
+      document.getElementById('workspace').innerHTML += `
+        <div class="mt-4 p-4 bg-blue-500/20 border border-blue-500/30 rounded-lg">
+          <p class="text-blue-400">🔄 Generating speech... (Est. cost: $0.02)</p>
+        </div>
+      `;
+      
+      // Simulate API call (replace with actual implementation)
+      setTimeout(() => {
+        document.getElementById('workspace').innerHTML += `
+          <div class="mt-4 p-4 bg-green-500/20 border border-green-500/30 rounded-lg">
+            <p class="text-green-400">✅ Speech generated successfully!</p>
+            <audio controls class="mt-2 w-full">
+              <source src="audio/wav;base64,..." type="audio/wav">
+            </audio>
+          </div>
+        `;
+      }, 2000);
+    }
+
+    // Initialize floating animations
+    document.addEventListener('DOMContentLoaded', function() {
+      const elements = document.querySelectorAll('.floating-element');
+      elements.forEach((el, index) => {
+        el.style.animationDelay = `${index * 0.5}s`;
+      });
+    });
+  </script>
+</body>
+</html>
