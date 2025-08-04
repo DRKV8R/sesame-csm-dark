@@ -1,217 +1,858 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Studio – Voice & Video</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Assistant Studio - Professional Voice & Video Training</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.dots.min.js"></script>
   <style>
-    /* ---------  GLOBAL THEME  --------- */
-    :root{
-      --glass-bg:rgba(0,0,0,.4);
-      --glass-border:rgba(255,255,255,.08);
-      --accent-red:#ef4444;
-      --accent-blue:#3b82f6;
-      --accent-green:#10b981;
-      --text-primary:#fff;
-      --text-secondary:#e5e7eb;
-      --text-muted:#9ca3af;
+    :root {
+      --glass-bg: rgba(0, 0, 0, 0.4);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      --accent-red: #ef4444;
+      --accent-blue: #3b82f6;
+      --accent-green: #10b981;
+      --accent-purple: #8b5cf6;
+      --text-primary: #ffffff;
+      --text-secondary: #e5e7eb;
+      --text-muted: #9ca3af;
     }
-    *{margin:0;padding:0;box-sizing:border-box;}
-    body{
-      font-family:'Inter',sans-serif;
-      background:linear-gradient(135deg,#000 0%,#1a1a1a 50%,#000 100%);
-      color:var(--text-primary);
-      min-height:100vh;overflow-x:hidden;
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
-    .glass{background:var(--glass-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--glass-border);box-shadow:0 6px 24px rgba(0,0,0,.3);}
-    a{color:var(--accent-blue);text-decoration:none;}
-    /* ---------  NAV  --------- */
-    nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1rem 2rem;}  
-    .nav-content{max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;}
-    .nav-logo{display:flex;align-items:center;gap:.75rem;font-size:1.25rem;font-weight:700;}
-    .menu{display:flex;align-items:center;gap:1.5rem;font-size:.875rem;font-weight:500;}
-    .menu-item{cursor:pointer;padding:.5rem 1rem;border-radius:8px;transition:.25s;}
-    .menu-item:hover{background:rgba(255,255,255,.08);}
-    /* ---------  TAB LAYOUT  --------- */
-    .tabs{max-width:1400px;margin:120px auto 40px;padding:0 2rem;}
-    .tab-buttons{display:flex;gap:1rem;margin-bottom:2rem;}
-    .tab-btn{padding:.75rem 1.25rem;border:none;border-radius:10px;font-weight:600;cursor:pointer;transition:.25s;background:var(--glass-bg);color:var(--text-primary);}
-    .tab-btn.active{background:var(--accent-blue);}
-    .tab{display:none;animation:fadeIn .4s ease;}
-    .tab.active{display:block;}
-    @keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
-    /* ---------  COMPONENTS  --------- */
-    .section{margin-bottom:2.5rem;}
-    .section h3{font-size:1.25rem;font-weight:600;margin-bottom:1rem;}
-    .upload-box{border:2px dashed var(--glass-border);border-radius:12px;padding:2rem;text-align:center;cursor:pointer;transition:.25s;}
-    .upload-box:hover{border-color:var(--accent-blue);background:rgba(59,130,246,.08);}
-    textarea,input[type=text]{width:100%;background:rgba(0,0,0,.3);border:1px solid var(--glass-border);border-radius:8px;color:var(--text-primary);padding:.75rem 1rem;font-size:.9rem;margin-bottom:1rem;}
-    button.primary{background:linear-gradient(135deg,var(--accent-red),#dc2626);color:#fff;border:none;border-radius:8px;padding:.75rem 1.5rem;font-weight:600;cursor:pointer;transition:.25s;}
-    button.primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(239,68,68,.4);}
-    button.secondary{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:8px;color:var(--text-primary);padding:.75rem 1.25rem;font-weight:600;cursor:pointer;margin-right:.75rem;}
-    .progress{height:8px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden;margin-bottom:1rem;}
-    .progress-fill{height:100%;background:linear-gradient(90deg,var(--accent-blue),var(--accent-green));width:0%;transition:width .3s;}
-    .image-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:.75rem;margin-top:1rem;}
-    .image-grid img{width:100%;height:120px;object-fit:cover;border-radius:8px;}
-    video,audio{width:100%;border-radius:12px;margin-top:1rem;}
-    /* ---------  MEDIA  --------- */
-    @media(max-width:768px){.tabs{padding:0 1rem}.menu{gap:1rem}.menu-item{padding:.25rem .75rem}}
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #000000;
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Advanced Glassmorphism */
+    .glass {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--glass-shadow);
+    }
+
+    .glass-intense {
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(30px);
+      -webkit-backdrop-filter: blur(30px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Timeline Workflow */
+    .timeline-container {
+      position: relative;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .timeline-step {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 3rem;
+      opacity: 0.5;
+      transition: all 0.3s ease;
+    }
+
+    .timeline-step.active {
+      opacity: 1;
+      transform: scale(1.02);
+    }
+
+    .timeline-step.completed {
+      opacity: 0.8;
+    }
+
+    .step-indicator {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.5rem;
+      margin-right: 2rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    .step-indicator.active {
+      background: linear-gradient(135deg, var(--accent-blue), #2563eb);
+      color: white;
+      box-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
+    }
+
+    .step-indicator.completed {
+      background: linear-gradient(135deg, var(--accent-green), #059669);
+      color: white;
+    }
+
+    .step-indicator.inactive {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-muted);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .step-content {
+      flex: 1;
+      padding: 2rem;
+      border-radius: 16px;
+      min-height: 400px;
+    }
+
+    /* Audio Meter */
+    .audio-meter {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+
+    .meter-channel {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
+      padding: 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .meter-bar {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 0.5rem;
+    }
+
+    .meter-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent-green), var(--accent-red));
+      transition: width 0.1s ease;
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+      font-size: 0.875rem;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent-blue), #2563eb);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, var(--accent-green), #059669);
+      color: white;
+    }
+
+    .btn-success:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4);
+    }
+
+    .btn-purple {
+      background: linear-gradient(135deg, var(--accent-purple), #7c3aed);
+      color: white;
+    }
+
+    .btn-purple:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    /* Form Elements */
+    .form-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--glass-border);
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.3);
+      color: var(--text-primary);
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    /* Upload Areas */
+    .upload-area {
+      border: 2px dashed var(--glass-border);
+      border-radius: 16px;
+      padding: 2rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin: 1rem 0;
+    }
+
+    .upload-area:hover, .upload-area.dragover {
+      border-color: var(--accent-blue);
+      background: rgba(59, 130, 246, 0.1);
+    }
+
+    /* Status Messages */
+    .status {
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      margin: 1rem 0;
+      display: none;
+      font-weight: 500;
+    }
+
+    .status.show {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .status.success {
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid var(--accent-green);
+      color: var(--accent-green);
+    }
+
+    .status.error {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid var(--accent-red);
+      color: var(--accent-red);
+    }
+
+    .status.warning {
+      background: rgba(245, 158, 11, 0.2);
+      border: 1px solid #f59e0b;
+      color: #fbbf24;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .timeline-container { padding: 1rem; }
+      .step-indicator { width: 40px; height: 40px; font-size: 1rem; margin-right: 1rem; }
+      .step-content { padding: 1rem; }
+    }
   </style>
 </head>
 <body>
-  <!-- NAV -->
-  <nav class="glass">
-    <div class="nav-content">
-      <div class="nav-logo">🎙️ AI Studio</div>
-      <div class="menu">
-        <div class="menu-item" onclick="openSettings()">⚙️ Settings</div>
-        <div class="menu-item" onclick="showUsage()">📊 Usage</div>
-        <div class="menu-item" id="genCounter">0/100</div>
+  <!-- Background Animation -->
+  <div id="vanta-bg" class="fixed inset-0 z-0"></div>
+
+  <!-- Navigation -->
+  <nav class="fixed top-0 left-0 right-0 z-50 glass">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center py-6">
+        <div class="flex items-center">
+          <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center mr-3">
+            <span class="text-white font-bold text-lg">🎭</span>
+          </div>
+          <h1 class="text-xl font-bold text-white">AI Assistant Studio</h1>
+        </div>
+        
+        <div class="flex items-center space-x-4">
+          <div class="glass px-4 py-2 rounded-lg">
+            <span class="text-sm text-gray-300">Progress:</span>
+            <span id="overallProgress" class="text-white font-semibold ml-1">0/3</span>
+          </div>
+          <button onclick="showHelp()" class="glass px-4 py-2 rounded-lg text-gray-300 hover:text-white transition">
+            📖 Help
+          </button>
+        </div>
       </div>
     </div>
   </nav>
 
-  <!-- TABS -->
-  <div class="tabs">
-    <!-- Tab buttons -->
-    <div class="tab-buttons">
-      <button class="tab-btn active" onclick="switchTab('voice')">Voice Cloning</button>
-      <button class="tab-btn" onclick="switchTab('video')">Video Generation</button>
-      <button class="tab-btn" onclick="switchTab('assistant')">AI Assistant (Mai)</button>
-    </div>
+  <!-- Main Content -->
+  <main class="relative z-10 pt-32 pb-20">
+    <div class="timeline-container">
+      
+      <!-- Header -->
+      <div class="text-center mb-12">
+        <h2 class="text-4xl font-bold text-white mb-4">Build Your AI Assistant</h2>
+        <p class="text-xl text-gray-300 max-w-2xl mx-auto">
+          Train voice and video models in sequence to create Mai, your professional AI assistant
+        </p>
+      </div>
 
-    <!-- VOICE TAB -->
-    <div id="voice" class="tab active glass">
-      <div class="section">
-        <h3>1 · Upload Audio</h3>
-        <div id="audioBox" class="upload-box" onclick="audioInput.click()">Drop or click to select audio</div>
-        <input id="audioInput" type="file" accept="audio/*" hidden />
-        <audio id="audioPreview" controls style="display:none"></audio>
-        <div id="voiceQ" class="progress" style="display:none"><div class="progress-fill"></div></div>
-      </div>
-      <div class="section">
-        <h3>2 · Transcription</h3>
-        <textarea id="transcription" rows="5" placeholder="Transcription will appear here…"></textarea>
-        <button class="secondary" onclick="transcribeAudio()">Generate ↺</button>
-      </div>
-      <div class="section">
-        <h3>3 · Train & Deploy</h3>
-        <input id="voiceName" type="text" placeholder="Voice Profile Name" />
-        <button class="primary" onclick="trainVoice()">🔄 Train Voice</button>
-        <div id="trainVoiceProg" class="progress" style="display:none"><div class="progress-fill"></div></div>
-        <button class="primary" onclick="generateVoice()" style="margin-top:1rem">🎤 Generate Speech</button>
-        <audio id="voiceOut" controls style="display:none"></audio>
+      <!-- Timeline Steps -->
+      <div class="timeline-steps">
+        
+        <!-- Step 1: Voice Training -->
+        <div class="timeline-step active" id="step-voice">
+          <div class="step-indicator active">1</div>
+          <div class="step-content glass-intense">
+            <h3 class="text-2xl font-bold text-white mb-2">🎙️ Train Voice Model</h3>
+            <p class="text-gray-300 mb-6">
+              Upload high-quality audio to train Mai's voice using Sesame CSM 1B with LoRA fine-tuning
+            </p>
+
+            <!-- Audio Upload -->
+            <div class="upload-area" id="audioUpload">
+              <div class="text-4xl mb-4">🎵</div>
+              <h4 class="text-lg font-semibold text-white mb-2">Drop audio file here</h4>
+              <p class="text-gray-400">MP3, WAV, FLAC • 30s minimum • Clear, single speaker</p>
+            </div>
+            
+            <input type="file" id="audioFile" accept="audio/*" style="display: none;">
+
+            <!-- Audio Preview -->
+            <div id="audioPreview" style="display: none;">
+              <audio controls class="w-full mb-4"></audio>
+              <div id="audioInfo" class="text-sm text-gray-400 mb-4"></div>
+              
+              <!-- Audio Level Meters -->
+              <div class="audio-meter">
+                <div class="meter-channel">
+                  <div class="text-sm font-medium text-gray-300 mb-2">Left Channel</div>
+                  <div class="meter-bar">
+                    <div class="meter-fill" id="meterLeft"></div>
+                  </div>
+                </div>
+                <div class="meter-channel">
+                  <div class="text-sm font-medium text-gray-300 mb-2">Right Channel</div>
+                  <div class="meter-bar">
+                    <div class="meter-fill" id="meterRight"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Voice Configuration -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div>
+                <label class="block text-sm font-medium text-gray-300 mb-2">Voice Name</label>
+                <input type="text" id="voiceName" class="form-input" placeholder="Mai Assistant" value="Mai">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-300 mb-2">Speaker ID</label>
+                <input type="number" id="speakerId" class="form-input" value="0" min="0" max="10">
+              </div>
+            </div>
+
+            <!-- Status -->
+            <div id="voiceStatus" class="status"></div>
+
+            <!-- Actions -->
+            <div class="flex gap-4">
+              <button id="trainVoiceBtn" class="btn btn-primary" onclick="trainVoiceModel()" disabled>
+                🚀 Train Voice LoRA
+              </button>
+              <button id="deployVoiceBtn" class="btn btn-success" onclick="deployVoiceModel()" disabled>
+                ☁️ Deploy to RunPod
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: Video Training -->
+        <div class="timeline-step" id="step-video">
+          <div class="step-indicator inactive">2</div>
+          <div class="step-content glass-intense">
+            <h3 class="text-2xl font-bold text-white mb-2">🎬 Train Video Model</h3>
+            <p class="text-gray-300 mb-6">
+              Upload character images to train WAN 2.1 for consistent video generation
+            </p>
+
+            <!-- Base Model Check -->
+            <div id="baseModelWarning" class="status warning show">
+              <strong>⚠️ Base Model Required:</strong> WAN 2.1 weights (~3GB) will be downloaded automatically on first deployment.
+            </div>
+
+            <!-- Image Upload -->
+            <div class="upload-area" id="imageUpload">
+              <div class="text-4xl mb-4">📸</div>
+              <h4 class="text-lg font-semibold text-white mb-2">Drop character images here</h4>
+              <p class="text-gray-400">JPG, PNG • 3-10 images • High quality portraits work best</p>
+            </div>
+            
+            <input type="file" id="imageFiles" accept="image/*" multiple style="display: none;">
+
+            <!-- Image Preview -->
+            <div id="imagePreview" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6" style="display: none;"></div>
+
+            <!-- Character Configuration -->
+            <div class="mb-6">
+              <label class="block text-sm font-medium text-gray-300 mb-2">Character Name</label>
+              <input type="text" id="characterName" class="form-input" placeholder="Mai" value="Mai">
+            </div>
+
+            <!-- Status -->
+            <div id="videoStatus" class="status"></div>
+
+            <!-- Actions -->
+            <div class="flex gap-4">
+              <button id="trainVideoBtn" class="btn btn-purple" onclick="trainVideoModel()" disabled>
+                🎨 Train Video LoRA
+              </button>
+              <button id="deployVideoBtn" class="btn btn-success" onclick="deployVideoModel()" disabled>
+                ☁️ Deploy to RunPod
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: Generate Demo -->
+        <div class="timeline-step" id="step-demo">
+          <div class="step-indicator inactive">3</div>
+          <div class="step-content glass-intense">
+            <h3 class="text-2xl font-bold text-white mb-2">🎭 Generate AI Demo</h3>
+            <p class="text-gray-300 mb-6">
+              Create a synchronized voice and video demonstration of your AI assistant
+            </p>
+
+            <!-- Script Input -->
+            <div class="mb-6">
+              <label class="block text-sm font-medium text-gray-300 mb-2">Assistant Script</label>
+              <textarea id="demoScript" class="form-input" rows="6" placeholder="Hi, I'm Mai, and I'm actually one of David's greatest achievements. I was created specifically for you, the hiring managers, using a sophisticated AI stack..."></textarea>
+            </div>
+
+            <!-- Video Prompt -->
+            <div class="mb-6">
+              <label class="block text-sm font-medium text-gray-300 mb-2">Video Scene Description</label>
+              <textarea id="videoPrompt" class="form-input" rows="3" placeholder="Professional woman in business attire sitting at modern office desk, speaking directly to camera"></textarea>
+            </div>
+
+            <!-- Demo Preview -->
+            <div id="demoPreview" style="display: none;" class="mb-6">
+              <video id="demoVideo" controls class="w-full rounded-lg"></video>
+            </div>
+
+            <!-- Status -->
+            <div id="demoStatus" class="status"></div>
+
+            <!-- Actions -->
+            <div class="flex gap-4">
+              <button id="generateDemoBtn" class="btn btn-primary" onclick="generateDemo()" disabled>
+                🎥 Generate Demo
+              </button>
+              <button id="downloadDemoBtn" class="btn btn-success" onclick="downloadDemo()" disabled style="display: none;">
+                📥 Download MP4
+              </button>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
+  </main>
 
-    <!-- VIDEO TAB -->
-    <div id="video" class="tab glass">
-      <div class="section">
-        <h3>1 · Upload Character Images</h3>
-        <div id="imgBox" class="upload-box" onclick="imgInput.click()">Drop or click to add images</div>
-        <input id="imgInput" type="file" accept="image/*" multiple hidden />
-        <div class="image-grid" id="imgGrid"></div>
+  <!-- Help Modal -->
+  <div id="helpModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="glass-intense max-w-2xl w-full rounded-2xl p-8">
+      <div class="flex justify-between items-center mb-6">
+        <h3 class="text-2xl font-bold text-white">How It Works</h3>
+        <button onclick="closeHelp()" class="text-gray-400 hover:text-white text-2xl">&times;</button>
       </div>
-      <div class="section">
-        <h3>2 · Train LoRA Model</h3>
-        <input id="characterName" type="text" placeholder="Character Name (e.g., Mai)" />
-        <button class="primary" onclick="trainVideoLora()">🔄 Train Video LoRA</button>
-        <div id="trainVideoProg" class="progress" style="display:none"><div class="progress-fill"></div></div>
+      
+      <div class="space-y-4 text-gray-300">
+        <div>
+          <h4 class="font-semibold text-white mb-2">Step 1: Voice Training</h4>
+          <p>Upload 30+ seconds of clear audio. We extract phonemes and train a LoRA adapter on Sesame CSM 1B (1.3B parameters) for your unique voice characteristics.</p>
+        </div>
+        
+        <div>
+          <h4 class="font-semibold text-white mb-2">Step 2: Video Training</h4>
+          <p>Upload 3-10 high-quality images of your character. We train a LoRA adapter on WAN 2.1 for consistent character appearance in generated videos.</p>
+        </div>
+        
+        <div>
+          <h4 class="font-semibold text-white mb-2">Step 3: Demo Generation</h4>
+          <p>Combine both models to create synchronized voice + video demonstrations. Perfect for portfolio presentations and hiring manager interactions.</p>
+        </div>
       </div>
-      <div class="section">
-        <h3>3 · Generate Video</h3>
-        <textarea id="videoPrompt" rows="3" placeholder="Describe the scene: Professional woman walking through office…"></textarea>
-        <button class="primary" onclick="generateVideo()">🎬 Generate Video</button>
-        <video id="videoOut" controls style="display:none"></video>
+      
+      <div class="mt-6 p-4 bg-blue-500/20 rounded-lg">
+        <p class="text-blue-200 text-sm">
+          <strong>Cost:</strong> ~$0.50 voice training + ~$1.00 video training + ~$0.10 per demo generation
+        </p>
       </div>
-    </div>
-
-    <!-- ASSISTANT TAB -->
-    <div id="assistant" class="tab glass">
-      <div class="section">
-        <h3>Mai Assistant Demo</h3>
-        <button class="primary" onclick="runMaiDemo()">🤖 Run Portfolio Demo</button>
-        <video id="maiVid" controls style="display:none"></video>
-        <audio id="maiAud" controls style="display:none"></audio>
-      </div>
-    </div>
-  </div>
-
-  <!-- SETTINGS MODAL (basic) -->
-  <div id="settingsModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(10px);align-items:center;justify-content:center;">
-    <div class="glass" style="max-width:420px;width:100%;padding:2rem;border-radius:16px;">
-      <h2 style="margin-bottom:1rem">Settings</h2>
-      <input id="endpointVoice" type="text" placeholder="Sesame Endpoint ID" />
-      <input id="endpointVideo" type="text" placeholder="WAN Endpoint ID" style="margin-top:.75rem" />
-      <input id="apiKey" type="text" placeholder="RunPod API Key" style="margin-top:.75rem" />
-      <button class="primary" style="margin-top:1rem;width:100%" onclick="saveSettings()">Save</button>
     </div>
   </div>
 
   <script>
-    /* ==========  UTILS  ========== */
-    const g = id => document.getElementById(id);
-    const settings = JSON.parse(localStorage.getItem('aiStudioSettings')||'{}');
+    // Global state
+    let currentStep = 0;
+    let voiceComplete = false;
+    let videoComplete = false;
+    let audioContext = null;
+    let audioAnalyser = null;
+    
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeBackground();
+      setupEventListeners();
+      updateProgress();
+    });
 
-    /* ==========  TAB LOGIC  ========== */
-    function switchTab(id){
-      document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-      document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-      document.querySelector(`.tab-btn[onclick*=\"${id}\"]`).classList.add('active');
-      g(id).classList.add('active');
-    }
-
-    /* ==========  SETTINGS  ========== */
-    function openSettings(){
-      g('settingsModal').style.display='flex';
-      g('endpointVoice').value=settings.voice||'';
-      g('endpointVideo').value=settings.video||'';
-      g('apiKey').value=settings.key||'';
-    }
-    function saveSettings(){
-      settings.voice=g('endpointVoice').value.trim();
-      settings.video=g('endpointVideo').value.trim();
-      settings.key=g('apiKey').value.trim();
-      localStorage.setItem('aiStudioSettings',JSON.stringify(settings));
-      g('settingsModal').style.display='none';
-      alert('Saved!');
-    }
-
-    /* ==========  VOICE PIPELINE  ========== */
-    const audioInput=g('audioInput');
-    audioInput.onchange=e=>{const file=e.target.files[0];if(file){previewAudio(file)}};
-    function previewAudio(file){
-      const url=URL.createObjectURL(file);
-      g('audioPreview').src=url;
-      g('audioPreview').style.display='block';
-    }
-    async function transcribeAudio(){/*placeholder*/}
-    async function trainVoice(){/*placeholder*/}
-    async function generateVoice(){/*placeholder*/}
-
-    /* ==========  VIDEO PIPELINE  ========== */
-    const imgInput=g('imgInput');
-    const imgGrid=g('imgGrid');
-    imgInput.onchange=e=>{
-      [...e.target.files].forEach(f=>{
-        const url=URL.createObjectURL(f);
-        const img=document.createElement('img');img.src=url;
-        imgGrid.appendChild(img);
+    function initializeBackground() {
+      VANTA.DOTS({
+        el: "#vanta-bg",
+        mouseControls: true,
+        touchControls: true,
+        gyroControls: false,
+        minHeight: 200,
+        minWidth: 200,
+        scale: 1.00,
+        scaleMobile: 1.00,
+        color: 0x3b82f6,
+        color2: 0x8b5cf6,
+        backgroundColor: 0x000000,
+        size: 2.0,
+        spacing: 20,
+        showLines: true
       });
-    };
-    async function trainVideoLora(){/*placeholder*/}
-    async function generateVideo(){/*placeholder*/}
-
-    /* ==========  MAI DEMO  ========== */
-    async function runMaiDemo(){/*placeholder*/}
-
-    /* ==========  USAGE COUNTER  ========== */
-    function showUsage(){alert('Usage: '+localStorage.getItem('genCount')||0);}
-    function incGen(n=1){
-      const c=parseInt(localStorage.getItem('genCount')||0)+n;
-      localStorage.setItem('genCount',c);g('genCounter').innerText=c+'/100';
     }
+
+    function setupEventListeners() {
+      // Audio upload
+      const audioUpload = document.getElementById('audioUpload');
+      const audioFile = document.getElementById('audioFile');
+      
+      audioUpload.addEventListener('click', () => audioFile.click());
+      audioUpload.addEventListener('dragover', handleDragOver);
+      audioUpload.addEventListener('drop', handleAudioDrop);
+      audioFile.addEventListener('change', handleAudioSelect);
+
+      // Image upload
+      const imageUpload = document.getElementById('imageUpload');
+      const imageFiles = document.getElementById('imageFiles');
+      
+      imageUpload.addEventListener('click', () => imageFiles.click());
+      imageUpload.addEventListener('dragover', handleDragOver);
+      imageUpload.addEventListener('drop', handleImageDrop);
+      imageFiles.addEventListener('change', handleImageSelect);
+    }
+
+    function handleDragOver(e) {
+      e.preventDefault();
+      e.currentTarget.classList.add('dragover');
+    }
+
+    function handleAudioDrop(e) {
+      e.preventDefault();
+      e.currentTarget.classList.remove('dragover');
+      const files = e.dataTransfer.files;
+      if (files.length > 0) {
+        processAudioFile(files[0]);
+      }
+    }
+
+    function handleAudioSelect(e) {
+      if (e.target.files.length > 0) {
+        processAudioFile(e.target.files[0]);
+      }
+    }
+
+    function processAudioFile(file) {
+      if (!file.type.startsWith('audio/')) {
+        showStatus('voiceStatus', 'Please select a valid audio file.', 'error');
+        return;
+      }
+
+      const preview = document.getElementById('audioPreview');
+      const audio = preview.querySelector('audio');
+      const info = document.getElementById('audioInfo');
+
+      const url = URL.createObjectURL(file);
+      audio.src = url;
+
+      info.innerHTML = `
+        <strong>${file.name}</strong><br>
+        Size: ${(file.size / 1024 / 1024).toFixed(2)} MB • Type: ${file.type}
+      `;
+
+      preview.style.display = 'block';
+      document.getElementById('trainVoiceBtn').disabled = false;
+
+      // Setup audio analysis
+      setupAudioAnalysis(audio);
+      showStatus('voiceStatus', 'Audio loaded successfully! Ready for training.', 'success');
+    }
+
+    function setupAudioAnalysis(audioElement) {
+      if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      }
+
+      audioElement.addEventListener('play', () => {
+        if (!audioAnalyser) {
+          const source = audioContext.createMediaElementSource(audioElement);
+          audioAnalyser = audioContext.createAnalyser();
+          const splitter = audioContext.createChannelSplitter(2);
+          const analyserL = audioContext.createAnalyser();
+          const analyserR = audioContext.createAnalyser();
+          
+          analyserL.fftSize = 256;
+          analyserR.fftSize = 256;
+          
+          source.connect(splitter);
+          splitter.connect(analyserL, 0);
+          splitter.connect(analyserR, 1);
+          source.connect(audioContext.destination);
+          
+          startAudioVisualization(analyserL, analyserR);
+        }
+      });
+    }
+
+    function startAudioVisualization(analyserL, analyserR) {
+      const meterLeft = document.getElementById('meterLeft');
+      const meterRight = document.getElementById('meterRight');
+      
+      function updateMeters() {
+        const dataArrayL = new Uint8Array(analyserL.frequencyBinCount);
+        const dataArrayR = new Uint8Array(analyserR.frequencyBinCount);
+        
+        analyserL.getByteFrequencyData(dataArrayL);
+        analyserR.getByteFrequencyData(dataArrayR);
+        
+        const avgL = dataArrayL.reduce((a, b) => a + b) / dataArrayL.length;
+        const avgR = dataArrayR.reduce((a, b) => a + b) / dataArrayR.length;
+        
+        meterLeft.style.width = (avgL / 255 * 100) + '%';
+        meterRight.style.width = (avgR / 255 * 100) + '%';
+        
+        requestAnimationFrame(updateMeters);
+      }
+      
+      updateMeters();
+    }
+
+    function handleImageDrop(e) {
+      e.preventDefault();
+      e.currentTarget.classList.remove('dragover');
+      const files = Array.from(e.dataTransfer.files);
+      processImageFiles(files);
+    }
+
+    function handleImageSelect(e) {
+      const files = Array.from(e.target.files);
+      processImageFiles(files);
+    }
+
+    function processImageFiles(files) {
+      const imageFiles = files.filter(file => file.type.startsWith('image/'));
+      
+      if (imageFiles.length < 3) {
+        showStatus('videoStatus', 'Please select at least 3 images for training.', 'warning');
+        return;
+      }
+
+      const preview = document.getElementById('imagePreview');
+      preview.innerHTML = '';
+      preview.style.display = 'grid';
+
+      imageFiles.forEach((file, index) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          img.className = 'w-full h-24 object-cover rounded-lg';
+          img.alt = `Character image ${index + 1}`;
+          preview.appendChild(img);
+        };
+        reader.readAsDataURL(file);
+      });
+
+      document.getElementById('trainVideoBtn').disabled = false;
+      showStatus('videoStatus', `${imageFiles.length} images loaded successfully! Ready for training.`, 'success');
+    }
+
+    async function trainVoiceModel() {
+      showStatus('voiceStatus', 'Training voice LoRA model...', 'warning');
+      document.getElementById('trainVoiceBtn').disabled = true;
+
+      // Simulate training process
+      setTimeout(() => {
+        showStatus('voiceStatus', 'Voice LoRA training completed successfully!', 'success');
+        document.getElementById('deployVoiceBtn').disabled = false;
+      }, 3000);
+    }
+
+    async function deployVoiceModel() {
+      showStatus('voiceStatus', 'Deploying to RunPod Serverless...', 'warning');
+      document.getElementById('deployVoiceBtn').disabled = true;
+
+      // Simulate deployment
+      setTimeout(() => {
+        voiceComplete = true;
+        showStatus('voiceStatus', '✅ Voice model deployed successfully!', 'success');
+        completeStep(0);
+        activateStep(1);
+        updateProgress();
+      }, 2000);
+    }
+
+    async function trainVideoModel() {
+      showStatus('videoStatus', 'Training video LoRA model...', 'warning');
+      document.getElementById('trainVideoBtn').disabled = true;
+      document.getElementById('baseModelWarning').style.display = 'none';
+
+      // Simulate training process
+      setTimeout(() => {
+        showStatus('videoStatus', 'Video LoRA training completed successfully!', 'success');
+        document.getElementById('deployVideoBtn').disabled = false;
+      }, 5000);
+    }
+
+    async function deployVideoModel() {
+      showStatus('videoStatus', 'Deploying to RunPod Serverless...', 'warning');
+      document.getElementById('deployVideoBtn').disabled = true;
+
+      // Simulate deployment
+      setTimeout(() => {
+        videoComplete = true;
+        showStatus('videoStatus', '✅ Video model deployed successfully!', 'success');
+        completeStep(1);
+        activateStep(2);
+        updateProgress();
+      }, 3000);
+    }
+
+    async function generateDemo() {
+      const script = document.getElementById('demoScript').value;
+      const prompt = document.getElementById('videoPrompt').value;
+
+      if (!script.trim() || !prompt.trim()) {
+        showStatus('demoStatus', 'Please provide both script and video prompt.', 'error');
+        return;
+      }
+
+      showStatus('demoStatus', 'Generating synchronized demo...', 'warning');
+      document.getElementById('generateDemoBtn').disabled = true;
+
+      // Simulate demo generation
+      setTimeout(() => {
+        const preview = document.getElementById('demoPreview');
+        const video = document.getElementById('demoVideo');
+        
+        // In production, this would be the actual generated video
+        video.src = 'data:video/mp4;base64,AAAAIGZ0eXBpc29tAAACAGlzb21pc28yYXZjMW1wNDEAAAAIZnJlZQAAAyltZGF0AAACrQYF//+p3EXpvebZSLeWLNgg2SPu73gyNjQgLSBjb3JlIDE2MSByMzAyNyA0ZGU1M2E2IC0gSC4yNjQvTVBFRy00IEFWQyBjb2RlYyAtIENvcHlsZWZ0IDIwMDMtMjAyMSAtIGh0dHA6Ly93d3cudmlkZW9sYW4ub3JnL3gyNjQuaHRtbCAtIG9wdGlvbnM6IGNhYmFjPTEgcmVmPTMgZGVibG9jaz0xOjA6MCBhbmFseXNlPTB4MzoweDExMyBtZT1oZXggc3VibWU9NyBwc3k9MSBwc3lfcmQ9MS4wMDowLjAwIG1peGVkX3JlZj0xIG1lX3JhbmdlPTE2IGNocm9tYV9tZT0xIHRyZWxsaXM9MSA4eDhkY3Q9MSBjcW09MCBkZWFkem9uZT0yMSwxMSBmYXN0X3Bza2lwPTEgY2hyb21hX3FwX29mZnNldD0tMiB0aHJlYWRzPTEgbG9va2FoZWFkX3RocmVhZHM9MSBzbGljZWRfdGhyZWFkcz0wIG5yPTAgZGVjaW1hdGU9MSBpbnRlcmxhY2VkPTAgYmx1cmF5X2NvbXBhdD0wIGNvbnN0cmFpbmVkX2ludHJhPTAgYmZyYW1lcz0zIGJfcHlyYW1pZD0yIGJfYWRhcHQ9MSBiX2JpYXM9MCBkaXJlY3Q9MSB3ZWlnaHRiPTEgb3Blbl9nb3A9MCB3ZWlnaHRwPTIga2V5aW50PTI1MCBrZXlpbnRfbWluPTI1IHNjZW5lY3V0PTQwIGludHJhX3JlZnJlc2g9MCByY19sb29rYWhlYWQ9NDAgcmM9Y3JmIG1idHJlZT0xIGNyZj0yMy4wIHFjb21wPTAuNjAgcXBtaW49MCBxcG1heD02OSBxcHN0ZXA9NCBpcF9yYXRpbz0xLjQwIGFxPTE6MS4wMACAAAABZWWIhAA3//72rvzLK0cLlS4dWXuzUfLoSXL9iDB9aAAAAwAAAwAAGxDxgNGVU9E=';
+        
+        preview.style.display = 'block';
+        showStatus('demoStatus', '✅ Demo generated successfully!', 'success');
+        document.getElementById('downloadDemoBtn').style.display = 'inline-flex';
+        document.getElementById('downloadDemoBtn').disabled = false;
+        
+        completeStep(2);
+        updateProgress();
+      }, 8000);
+    }
+
+    function downloadDemo() {
+      // In production, this would download the actual generated video
+      const a = document.createElement('a');
+      a.href = document.getElementById('demoVideo').src;
+      a.download = 'mai_assistant_demo.mp4';
+      a.click();
+    }
+
+    function completeStep(stepIndex) {
+      const steps = document.querySelectorAll('.timeline-step');
+      const step = steps[stepIndex];
+      const indicator = step.querySelector('.step-indicator');
+      
+      step.classList.remove('active');
+      step.classList.add('completed');
+      indicator.classList.remove('active');
+      indicator.classList.add('completed');
+      indicator.textContent = '✓';
+    }
+
+    function activateStep(stepIndex) {
+      const steps = document.querySelectorAll('.timeline-step');
+      const step = steps[stepIndex];
+      const indicator = step.querySelector('.step-indicator');
+      
+      step.classList.remove('inactive');
+      step.classList.add('active');
+      indicator.classList.remove('inactive');
+      indicator.classList.add('active');
+
+      // Enable buttons for the active step
+      if (stepIndex === 2) { // Demo step
+        document.getElementById('generateDemoBtn').disabled = false;
+      }
+    }
+
+    function updateProgress() {
+      let completed = 0;
+      if (voiceComplete) completed++;
+      if (videoComplete) completed++;
+      if (document.getElementById('downloadDemoBtn').style.display !== 'none') completed++;
+      
+      document.getElementById('overallProgress').textContent = `${completed}/3`;
+    }
+
+    function showStatus(elementId, message, type) {
+      const status = document.getElementById(elementId);
+      status.textContent = message;
+      status.className = `status ${type} show`;
+      
+      if (type === 'success' || type === 'error') {
+        setTimeout(() => {
+          status.classList.remove('show');
+        }, 5000);
+      }
+    }
+
+    function showHelp() {
+      document.getElementById('helpModal').classList.remove('hidden');
+    }
+
+    function closeHelp() {
+      document.getElementById('helpModal').classList.add('hidden');
+    }
+
+    // Close help modal when clicking outside
+    document.getElementById('helpModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeHelp();
+      }
+    });
   </script>
 </body>
 </html>
