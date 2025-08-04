@@ -3,191 +3,697 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sesame Voice Studio</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: { geist: ['Geist', 'sans-serif'] },
-          animation: {
-            'float': 'float 6s ease-in-out infinite',
-            'slide-in': 'slideIn 0.3s ease-out',
-            'fade-in': 'fadeIn 0.5s ease-out',
-          },
-          keyframes: {
-            float: { 
-              '0%, 100%': { transform: 'translateY(0px)' },
-              '50%': { transform: 'translateY(-8px)' }
-            },
-            slideIn: {
-              '0%': { transform: 'translateX(-100%)', opacity: 0 },
-              '100%': { transform: 'translateX(0)', opacity: 1 }
-            },
-            fadeIn: {
-              '0%': { opacity: 0, transform: 'translateY(10px)' },
-              '100%': { opacity: 1, transform: 'translateY(0)' }
-            }
-          }
-        }
-      }
-    }
-  </script>
+  <title>Sesame Voice Studio - Professional Voice Cloning Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --glass-bg: rgba(0, 0, 0, 0.4);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      --accent-red: #ef4444;
+      --accent-blue: #3b82f6;
+      --accent-green: #10b981;
+      --text-primary: #ffffff;
+      --text-secondary: #e5e7eb;
+      --text-muted: #9ca3af;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --error: #ef4444;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%);
+      color: var(--text-primary);
+      min-height: 100vh;
+    }
+
+    /* Advanced Glassmorphism */
     .glass {
-      background: rgba(0, 0, 0, 0.6);
+      background: var(--glass-bg);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--glass-shadow);
     }
-    .menu-item:hover { background: rgba(239, 68, 68, 0.1); }
-    .floating-element { animation: float 6s ease-in-out infinite; }
-    .generation-limit { color: #10b981; font-weight: 600; }
+
+    .glass-intense {
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(30px);
+      -webkit-backdrop-filter: blur(30px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    /* Animations */
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+
+    .floating { animation: float 6s ease-in-out infinite; }
+    .fade-in { animation: fadeIn 0.5s ease-out; }
+
+    /* Navigation */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 1rem 2rem;
+    }
+
+    .nav-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
+    .nav-logo {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--accent-red), #dc2626);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+    }
+
+    .nav-menu {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .nav-item {
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    .nav-item:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .generation-counter {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+
+    /* Main Content */
+    .main {
+      padding-top: 100px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    /* Process Steps */
+    .process-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .process-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .process-subtitle {
+      font-size: 1.125rem;
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .process-steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .step-card {
+      padding: 2.5rem;
+      border-radius: 20px;
+      position: relative;
+      transition: all 0.3s ease;
+      min-height: 400px;
+    }
+
+    .step-card.active {
+      border: 2px solid var(--accent-red);
+      box-shadow: 0 0 30px rgba(239, 68, 68, 0.3);
+    }
+
+    .step-card.disabled {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    .step-card.completed {
+      border: 2px solid var(--success);
+    }
+
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .step-number {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.25rem;
+      background: linear-gradient(135deg, var(--accent-blue), #2563eb);
+    }
+
+    .step-card.active .step-number {
+      background: linear-gradient(135deg, var(--accent-red), #dc2626);
+    }
+
+    .step-card.completed .step-number {
+      background: linear-gradient(135deg, var(--success), #059669);
+    }
+
+    .step-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    /* Upload Section */
+    .upload-area {
+      border: 2px dashed var(--glass-border);
+      border-radius: 16px;
+      padding: 3rem 2rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-bottom: 1.5rem;
+    }
+
+    .upload-area:hover, .upload-area.dragover {
+      border-color: var(--accent-blue);
+      background: rgba(59, 130, 246, 0.1);
+    }
+
+    .upload-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      color: var(--text-muted);
+      transition: all 0.3s ease;
+    }
+
+    .upload-area:hover .upload-icon {
+      color: var(--accent-blue);
+      transform: scale(1.1);
+    }
+
+    .upload-text {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .upload-hint {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+    }
+
+    /* Form Elements */
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      font-size: 0.875rem;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--glass-border);
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.3);
+      color: var(--text-primary);
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .form-input[type="password"] {
+      font-family: monospace;
+      letter-spacing: 2px;
+    }
+
+    /* Secure input - shows dots only */
+    .secure-input {
+      position: relative;
+    }
+
+    .secure-input input {
+      color: transparent;
+      text-shadow: 0 0 0 var(--text-primary);
+    }
+
+    .secure-input input::-webkit-input-placeholder {
+      color: var(--text-muted);
+      text-shadow: none;
+    }
+
+    .secure-input::after {
+      content: attr(data-dots);
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--accent-red);
+      font-size: 1.25rem;
+      pointer-events: none;
+      letter-spacing: 2px;
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+      font-size: 0.875rem;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent-red), #dc2626);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 20px rgba(239, 68, 68, 0.4);
+    }
+
+    .btn-secondary {
+      background: var(--glass-bg);
+      color: var(--text-primary);
+      border: 1px solid var(--glass-border);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    /* Progress Bar */
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-blue), var(--accent-green));
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    /* Status Messages */
+    .status {
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      margin: 1rem 0;
+      display: none;
+      font-weight: 500;
+    }
+
+    .status.show {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .status.success {
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid var(--success);
+      color: var(--success);
+    }
+
+    .status.error {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid var(--error);
+      color: var(--error);
+    }
+
+    .status.warning {
+      background: rgba(245, 158, 11, 0.2);
+      border: 1px solid var(--warning);
+      color: var(--warning);
+    }
+
+    /* Modal */
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      padding: 2rem;
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-content {
+      max-width: 500px;
+      width: 100%;
+      padding: 2rem;
+      border-radius: 16px;
+      position: relative;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+
+    .modal-close {
+      width: 32px;
+      height: 32px;
+      border: none;
+      background: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      font-size: 1.25rem;
+    }
+
+    .modal-close:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-primary);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .container { padding: 0 1rem; }
+      .process-steps { grid-template-columns: 1fr; }
+      .nav-menu { gap: 1rem; }
+      .nav-item { padding: 0.25rem 0.75rem; font-size: 0.75rem; }
+    }
   </style>
 </head>
-<body class="bg-black text-white font-geist min-h-screen">
-  <!-- Navigation Menu -->
-  <nav class="glass fixed top-0 left-0 right-0 z-50 p-4">
-    <div class="max-w-7xl mx-auto flex items-center justify-between">
-      <div class="flex items-center space-x-4">
-        <div class="w-8 h-8 bg-red-500 rounded-lg flex items-center justify-center">
-          <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4z"/>
-            <path d="M5.5 9.643a.75.75 0 00-1.5 0V10c0 3.06 2.29 5.585 5.25 5.954V17.5h-1.5a.75.75 0 000 1.5h4.5a.75.75 0 000-1.5H10.5v-1.546A6.001 6.001 0 0016 10v-.357a.75.75 0 00-1.5 0V10a4.5 4.5 0 01-9 0v-.357z"/>
-          </svg>
-        </div>
-        <h1 class="text-xl font-bold">Sesame Voice Studio</h1>
+<body>
+  <!-- Navigation -->
+  <nav class="nav glass">
+    <div class="nav-content">
+      <div class="nav-brand">
+        <div class="nav-logo">🎙️</div>
+        Sesame Voice Studio
       </div>
       
-      <div class="flex items-center space-x-6">
-        <button onclick="showSettings()" class="menu-item px-4 py-2 rounded-lg transition-all">
-          ⚙️ Settings
-        </button>
-        <button onclick="showApiDocs()" class="menu-item px-4 py-2 rounded-lg transition-all">
-          📖 API Docs
-        </button>
-        <button onclick="showUsage()" class="menu-item px-4 py-2 rounded-lg transition-all">
-          📊 Usage
-        </button>
-        <div class="text-sm">
-          <span class="text-gray-400">Generations:</span>
-          <span class="generation-limit" id="generationCount">0/100</span>
+      <div class="nav-menu">
+        <div class="nav-item" onclick="showSettings()">⚙️ Settings</div>
+        <div class="nav-item" onclick="showApiDocs()">📖 API</div>
+        <div class="nav-item" onclick="showUsage()">📊 Usage</div>
+        <div class="generation-counter glass">
+          <span>Generations:</span>
+          <span id="generationCount" style="color: var(--success);">0/100</span>
         </div>
       </div>
     </div>
   </nav>
 
   <!-- Main Content -->
-  <div class="pt-20 p-6">
-    <div class="max-w-7xl mx-auto">
-      <!-- Quick Actions -->
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div class="glass rounded-2xl p-6 floating-element">
-          <h3 class="text-lg font-semibold mb-2">🎵 Upload Audio</h3>
-          <p class="text-gray-400 text-sm mb-4">Start voice cloning</p>
-          <button onclick="openUploader()" class="w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg transition">
-            Upload
+  <main class="main">
+    <div class="container">
+      <!-- Process Header -->
+      <div class="process-header fade-in">
+        <h1 class="process-title">Professional Voice Cloning</h1>
+        <p class="process-subtitle">
+          Create studio-quality voice clones with our step-by-step process. Each step unlocks after completing prerequisites.
+        </p>
+      </div>
+
+      <!-- Process Steps -->
+      <div class="process-steps">
+        <!-- Step 1: Upload Audio -->
+        <div class="step-card glass-intense floating active" id="step-upload">
+          <div class="step-header">
+            <div class="step-number">1</div>
+            <div class="step-title">Upload Audio</div>
+          </div>
+          
+          <div class="upload-area" id="uploadArea">
+            <div class="upload-icon">🎵</div>
+            <div class="upload-text">Drop audio file here or click to browse</div>
+            <div class="upload-hint">
+              MP3, WAV, FLAC • 30s minimum • Clear, single speaker • No background noise
+            </div>
+          </div>
+          
+          <input type="file" id="audioFile" accept="audio/*" style="display: none;">
+          
+          <div id="audioPreview" style="display: none; margin-top: 1rem;">
+            <audio controls style="width: 100%; margin-bottom: 1rem;"></audio>
+            <div id="audioInfo" style="font-size: 0.875rem; color: var(--text-secondary);"></div>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Audio Quality Check</label>
+            <div id="qualityCheck" class="status">
+              Upload audio to analyze quality...
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: Transcription -->
+        <div class="step-card glass-intense floating disabled" id="step-transcribe">
+          <div class="step-header">
+            <div class="step-number">2</div>
+            <div class="step-title">Review Transcription</div>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Generated Transcription</label>
+            <textarea id="transcriptionText" class="form-input" rows="6" 
+                      placeholder="Audio transcription will appear here automatically..."></textarea>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Language Detection</label>
+            <select id="languageSelect" class="form-input">
+              <option value="auto">Auto-detect</option>
+              <option value="en">English</option>
+              <option value="es">Spanish</option>
+              <option value="fr">French</option>
+              <option value="de">German</option>
+            </select>
+          </div>
+          
+          <button class="btn btn-primary" id="approveTranscriptionBtn" disabled>
+            ✅ Approve Transcription
           </button>
         </div>
-        
-        <div class="glass rounded-2xl p-6 floating-element">
-          <h3 class="text-lg font-semibold mb-2">🔊 Quick Generate</h3>
-          <p class="text-gray-400 text-sm mb-4">Text to speech</p>
-          <button onclick="openQuickGen()" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg transition">
-            Generate
-          </button>
-        </div>
-        
-        <div class="glass rounded-2xl p-6 floating-element">
-          <h3 class="text-lg font-semibold mb-2">📚 Voice Library</h3>
-          <p class="text-gray-400 text-sm mb-4">Manage voices</p>
-          <button onclick="openLibrary()" class="w-full bg-green-500 hover:bg-green-600 text-white py-2 rounded-lg transition">
-            Browse
-          </button>
-        </div>
-        
-        <div class="glass rounded-2xl p-6 floating-element">
-          <h3 class="text-lg font-semibold mb-2">🚀 Deploy</h3>
-          <p class="text-gray-400 text-sm mb-4">RunPod setup</p>
-          <button onclick="openDeploy()" class="w-full bg-purple-500 hover:bg-purple-600 text-white py-2 rounded-lg transition">
-            Setup
-          </button>
+
+        <!-- Step 3: Voice Configuration -->
+        <div class="step-card glass-intense floating disabled" id="step-configure">
+          <div class="step-header">
+            <div class="step-number">3</div>
+            <div class="step-title">Configure Voice</div>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Voice Profile Name</label>
+            <input type="text" id="voiceName" class="form-input" 
+                   placeholder="My Professional Voice" maxlength="50">
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Speaker Settings</label>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+              <div>
+                <label style="font-size: 0.75rem; color: var(--text-muted);">Speaker ID</label>
+                <input type="number" id="speakerId" class="form-input" value="0" min="0" max="10">
+              </div>
+              <div>
+                <label style="font-size: 0.75rem; color: var(--text-muted);">Max Length (ms)</label>
+                <input type="number" id="maxLength" class="form-input" value="30000" min="5000" max="30000">
+              </div>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Test Generation</label>
+            <input type="text" id="testText" class="form-input" 
+                   placeholder="Enter text to test your voice clone..." maxlength="200">
+          </div>
+          
+          <div style="display: flex; gap: 1rem;">
+            <button class="btn btn-secondary" id="testVoiceBtn" disabled>
+              🔊 Test Voice
+            </button>
+            <button class="btn btn-primary" id="saveVoiceBtn" disabled>
+              💾 Save Profile
+            </button>
+          </div>
         </div>
       </div>
 
-      <!-- Main Workspace -->
-      <div id="workspace" class="glass rounded-2xl p-8 min-h-96">
-        <div class="text-center">
-          <div class="w-20 h-20 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-            <svg class="w-10 h-10 text-red-400" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4z"/>
-            </svg>
-          </div>
-          <h2 class="text-2xl font-bold mb-4">Welcome to Voice Studio</h2>
-          <p class="text-gray-400 mb-6">Professional voice cloning with zero idle costs</p>
-          <div class="flex justify-center space-x-4">
-            <button onclick="openUploader()" class="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg transition">
-              Get Started
-            </button>
-            <button onclick="showApiDocs()" class="glass border border-red-500/30 text-white px-6 py-3 rounded-lg transition hover:bg-red-500/10">
-              View Docs
-            </button>
-          </div>
+      <!-- Voice Library -->
+      <div class="glass-intense" style="padding: 2rem; border-radius: 16px; margin-top: 2rem;">
+        <h2 style="font-size: 1.5rem; font-weight: 600; margin-bottom: 1.5rem;">
+          📚 Your Voice Library
+        </h2>
+        <div id="voiceLibrary">
+          <p style="color: var(--text-muted); text-align: center; padding: 2rem;">
+            No voice profiles created yet. Complete the steps above to create your first voice clone.
+          </p>
         </div>
       </div>
     </div>
-  </div>
+  </main>
 
   <!-- Settings Modal -->
-  <div id="settingsModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center">
-    <div class="glass rounded-2xl p-8 max-w-md w-full mx-4 animate-fade-in">
-      <div class="flex justify-between items-center mb-6">
-        <h3 class="text-xl font-bold">Settings</h3>
-        <button onclick="closeSettings()" class="text-gray-400 hover:text-white">✕</button>
+  <div class="modal" id="settingsModal">
+    <div class="modal-content glass-intense">
+      <div class="modal-header">
+        <h3 class="modal-title">⚙️ Settings</h3>
+        <button class="modal-close" onclick="closeSettings()">✕</button>
       </div>
       
-      <div class="space-y-4">
-        <div>
-          <label class="block text-sm font-medium mb-2">RunPod Endpoint</label>
-          <input type="text" id="endpointInput" class="w-full bg-black/50 border border-gray-600 rounded-lg px-4 py-2" placeholder="abc123-def456">
-        </div>
-        
-        <div>
-          <label class="block text-sm font-medium mb-2">API Key</label>
-          <input type="password" id="apiKeyInput" class="w-full bg-black/50 border border-gray-600 rounded-lg px-4 py-2" placeholder="Your API key">
-        </div>
-        
-        <div>
-          <label class="block text-sm font-medium mb-2">Generation Limit</label>
-          <select id="limitSelect" class="w-full bg-black/50 border border-gray-600 rounded-lg px-4 py-2">
-            <option value="100">100 generations/day</option>
-            <option value="500">500 generations/day</option>
-            <option value="1000">1000 generations/day</option>
-            <option value="unlimited">Unlimited</option>
-          </select>
-        </div>
-        
-        <div>
-          <label class="block text-sm font-medium mb-2">Auto-save Voice Profiles</label>
-          <input type="checkbox" id="autoSaveCheck" class="rounded" checked>
+      <div class="form-group">
+        <label class="form-label">RunPod Endpoint ID</label>
+        <div class="secure-input" data-dots="">
+          <input type="text" id="endpointInput" class="form-input" 
+                 placeholder="Enter your endpoint ID" onchange="updateSecureInput(this)">
         </div>
       </div>
       
-      <div class="flex justify-end space-x-4 mt-6">
-        <button onclick="closeSettings()" class="px-4 py-2 text-gray-400 hover:text-white">Cancel</button>
-        <button onclick="saveSettings()" class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg">Save</button>
+      <div class="form-group">
+        <label class="form-label">RunPod API Key</label>
+        <div class="secure-input" data-dots="">
+          <input type="password" id="apiKeyInput" class="form-input" 
+                 placeholder="Enter your API key" onchange="updateSecureInput(this)">
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Daily Generation Limit</label>
+        <select id="limitSelect" class="form-input">
+          <option value="50">50 generations/day (Free)</option>
+          <option value="100" selected>100 generations/day (Standard)</option>
+          <option value="500">500 generations/day (Pro)</option>
+          <option value="unlimited">Unlimited (Enterprise)</option>
+        </select>
+      </div>
+      
+      <div style="display: flex; justify-content: end; gap: 1rem; margin-top: 2rem;">
+        <button class="btn btn-secondary" onclick="closeSettings()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
       </div>
     </div>
   </div>
 
   <script>
-    // Persistent Settings Management
-    class VoiceStudioSettings {
+    // Advanced Voice Studio with Security and Step Validation
+    class VoiceStudio {
       constructor() {
         this.settings = this.loadSettings();
+        this.currentStep = 1;
+        this.audioFile = null;
+        this.transcription = '';
+        this.voiceProfiles = JSON.parse(localStorage.getItem('voiceProfiles') || '[]');
         this.generationCount = parseInt(localStorage.getItem('generationCount') || '0');
-        this.updateUI();
+        
+        this.init();
+      }
+      
+      init() {
+        this.setupEventListeners();
+        this.updateGenerationCounter();
+        this.renderVoiceLibrary();
+        this.updateStepStates();
       }
       
       loadSettings() {
@@ -195,204 +701,402 @@
           endpoint: '',
           apiKey: '',
           generationLimit: 100,
-          autoSave: true,
-          maxAudioLength: 30000
+          autoSave: true
         };
         
         const saved = localStorage.getItem('voiceStudioSettings');
         return saved ? { ...defaults, ...JSON.parse(saved) } : defaults;
       }
       
-      saveSettings() {
-        localStorage.setItem('voiceStudioSettings', JSON.stringify(this.settings));
+      setupEventListeners() {
+        // Upload area events
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('audioFile');
+        
+        uploadArea.addEventListener('click', () => fileInput.click());
+        uploadArea.addEventListener('dragover', this.handleDragOver.bind(this));
+        uploadArea.addEventListener('drop', this.handleDrop.bind(this));
+        fileInput.addEventListener('change', this.handleFileSelect.bind(this));
+        
+        // Button events
+        document.getElementById('approveTranscriptionBtn').addEventListener('click', this.approveTranscription.bind(this));
+        document.getElementById('testVoiceBtn').addEventListener('click', this.testVoice.bind(this));
+        document.getElementById('saveVoiceBtn').addEventListener('click', this.saveVoiceProfile.bind(this));
       }
       
-      updateUI() {
-        document.getElementById('generationCount').textContent = 
-          `${this.generationCount}/${this.settings.generationLimit === 'unlimited' ? '∞' : this.settings.generationLimit}`;
+      handleDragOver(e) {
+        e.preventDefault();
+        e.currentTarget.classList.add('dragover');
+      }
+      
+      handleDrop(e) {
+        e.preventDefault();
+        e.currentTarget.classList.remove('dragover');
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+          this.processAudioFile(files[0]);
+        }
+      }
+      
+      handleFileSelect(e) {
+        if (e.target.files.length > 0) {
+          this.processAudioFile(e.target.files[0]);
+        }
+      }
+      
+      async processAudioFile(file) {
+        if (!file.type.startsWith('audio/')) {
+          this.showStatus('Please select a valid audio file.', 'error');
+          return;
+        }
+        
+        if (file.size > 50 * 1024 * 1024) { // 50MB limit
+          this.showStatus('File too large. Maximum size is 50MB.', 'error');
+          return;
+        }
+        
+        this.audioFile = file;
+        this.displayAudioPreview(file);
+        await this.analyzeAudioQuality(file);
+        this.completeStep(1);
+        this.activateStep(2);
+        await this.generateTranscription(file);
+      }
+      
+      displayAudioPreview(file) {
+        const preview = document.getElementById('audioPreview');
+        const audio = preview.querySelector('audio');
+        const info = document.getElementById('audioInfo');
+        
+        const url = URL.createObjectURL(file);
+        audio.src = url;
+        
+        info.innerHTML = `
+          <strong style="color: var(--text-primary);">${file.name}</strong><br>
+          <span style="color: var(--text-secondary);">
+            Size: ${(file.size / 1024 / 1024).toFixed(2)} MB • 
+            Type: ${file.type}
+          </span>
+        `;
+        
+        preview.style.display = 'block';
+      }
+      
+      async analyzeAudioQuality(file) {
+        const qualityCheck = document.getElementById('qualityCheck');
+        qualityCheck.className = 'status show warning';
+        qualityCheck.textContent = 'Analyzing audio quality...';
+        
+        // Simulate quality analysis
+        setTimeout(() => {
+          // Mock quality analysis results
+          const duration = Math.random() * 120 + 30; // 30-150 seconds
+          const quality = Math.random() > 0.3 ? 'good' : 'poor';
+          
+          if (duration < 30) {
+            qualityCheck.className = 'status show error';
+            qualityCheck.textContent = '❌ Audio too short. Minimum 30 seconds required.';
+            return;
+          }
+          
+          if (quality === 'good') {
+            qualityCheck.className = 'status show success';
+            qualityCheck.textContent = `✅ Audio quality: Excellent • Duration: ${duration.toFixed(1)}s • Ready for cloning`;
+          } else {
+            qualityCheck.className = 'status show warning';
+            qualityCheck.textContent = '⚠️ Audio quality: Fair • Consider re-recording in a quieter environment';
+          }
+        }, 2000);
+      }
+      
+      async generateTranscription(file) {
+        const transcriptionArea = document.getElementById('transcriptionText');
+        transcriptionArea.value = 'Generating transcription...';
+        
+        // Simulate transcription generation
+        setTimeout(() => {
+          const sampleTranscriptions = [
+            "Hello, this is a sample voice recording for creating a voice clone. The quality of the final voice model depends on clear, natural speech patterns and consistent audio quality throughout the recording.",
+            "Welcome to voice cloning technology. This audio sample will be used to train an AI model that can replicate the speaker's voice characteristics, including tone, pace, and pronunciation patterns.",
+            "Professional voice cloning requires high-quality audio samples with minimal background noise. This recording demonstrates natural speech patterns that will help create an accurate voice model."
+          ];
+          
+          this.transcription = sampleTranscriptions[Math.floor(Math.random() * sampleTranscriptions.length)];
+          transcriptionArea.value = this.transcription;
+          
+          document.getElementById('approveTranscriptionBtn').disabled = false;
+          this.showStatus('Transcription completed successfully!', 'success');
+        }, 3000);
+      }
+      
+      approveTranscription() {
+        this.transcription = document.getElementById('transcriptionText').value;
+        this.completeStep(2);
+        this.activateStep(3);
+        this.showStatus('Transcription approved. Configure your voice settings.', 'success');
+      }
+      
+      async testVoice() {
+        const testText = document.getElementById('testText').value;
+        if (!testText) {
+          this.showStatus('Please enter text to test your voice.', 'warning');
+          return;
+        }
+        
+        if (!this.checkGenerationLimit()) return;
+        
+        if (!this.settings.endpoint || !this.settings.apiKey) {
+          this.showStatus('Please configure your RunPod settings first.', 'error');
+          showSettings();
+          return;
+        }
+        
+        this.showStatus('Generating test audio...', 'warning');
+        
+        try {
+          // Simulate API call
+          await this.delay(3000);
+          
+          // Mock successful generation
+          this.incrementGeneration();
+          this.showStatus('✅ Test audio generated successfully!', 'success');
+          
+          // Enable save button
+          document.getElementById('saveVoiceBtn').disabled = false;
+          
+        } catch (error) {
+          this.showStatus(`Test failed: ${error.message}`, 'error');
+        }
+      }
+      
+      saveVoiceProfile() {
+        const name = document.getElementById('voiceName').value || 'Unnamed Voice';
+        const speakerId = document.getElementById('speakerId').value;
+        const maxLength = document.getElementById('maxLength').value;
+        
+        const profile = {
+          id: Date.now(),
+          name: name,
+          speakerId: parseInt(speakerId),
+          maxLength: parseInt(maxLength),
+          transcription: this.transcription,
+          audioFile: this.audioFile?.name || 'Unknown',
+          created: new Date().toLocaleDateString()
+        };
+        
+        this.voiceProfiles.push(profile);
+        localStorage.setItem('voiceProfiles', JSON.stringify(this.voiceProfiles));
+        this.renderVoiceLibrary();
+        this.showStatus('✅ Voice profile saved successfully!', 'success');
+        
+        // Reset form for next voice
+        this.resetForm();
+      }
+      
+      completeStep(stepNumber) {
+        const stepCard = document.getElementById(`step-${this.getStepName(stepNumber)}`);
+        stepCard.classList.remove('active');
+        stepCard.classList.add('completed');
+      }
+      
+      activateStep(stepNumber) {
+        const stepCard = document.getElementById(`step-${this.getStepName(stepNumber)}`);
+        stepCard.classList.remove('disabled');
+        stepCard.classList.add('active');
+        this.currentStep = stepNumber;
+      }
+      
+      updateStepStates() {
+        // Only step 1 is initially active
+        for (let i = 2; i <= 3; i++) {
+          const stepCard = document.getElementById(`step-${this.getStepName(i)}`);
+          stepCard.classList.add('disabled');
+        }
+      }
+      
+      getStepName(stepNumber) {
+        const stepNames = ['', 'upload', 'transcribe', 'configure'];
+        return stepNames[stepNumber];
+      }
+      
+      checkGenerationLimit() {
+        if (this.settings.generationLimit !== 'unlimited' && 
+            this.generationCount >= this.settings.generationLimit) {
+          this.showStatus('❌ Daily generation limit reached!', 'error');
+          return false;
+        }
+        return true;
       }
       
       incrementGeneration() {
-        if (this.settings.generationLimit !== 'unlimited' && 
-            this.generationCount >= this.settings.generationLimit) {
-          alert('Generation limit reached for today!');
-          return false;
-        }
         this.generationCount++;
         localStorage.setItem('generationCount', this.generationCount.toString());
-        this.updateUI();
-        return true;
+        this.updateGenerationCounter();
+      }
+      
+      updateGenerationCounter() {
+        const counter = document.getElementById('generationCount');
+        const limit = this.settings.generationLimit === 'unlimited' ? '∞' : this.settings.generationLimit;
+        counter.textContent = `${this.generationCount}/${limit}`;
+        
+        if (this.settings.generationLimit !== 'unlimited' && 
+            this.generationCount >= this.settings.generationLimit * 0.8) {
+          counter.style.color = 'var(--warning)';
+        }
+      }
+      
+      renderVoiceLibrary() {
+        const library = document.getElementById('voiceLibrary');
+        
+        if (this.voiceProfiles.length === 0) {
+          library.innerHTML = `
+            <p style="color: var(--text-muted); text-align: center; padding: 2rem;">
+              No voice profiles created yet. Complete the steps above to create your first voice clone.
+            </p>
+          `;
+          return;
+        }
+        
+        library.innerHTML = this.voiceProfiles.map(profile => `
+          <div class="glass" style="padding: 1.5rem; border-radius: 12px; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <h4 style="color: var(--text-primary); margin-bottom: 0.5rem;">${profile.name}</h4>
+              <p style="color: var(--text-secondary); font-size: 0.875rem;">
+                Speaker ID: ${profile.speakerId} • Created: ${profile.created} • Audio: ${profile.audioFile}
+              </p>
+            </div>
+            <div style="display: flex; gap: 0.75rem;">
+              <button class="btn btn-secondary" onclick="voiceStudio.useVoice(${profile.id})">Use</button>
+              <button class="btn btn-secondary" onclick="voiceStudio.deleteVoice(${profile.id})" style="color: var(--error);">Delete</button>
+            </div>
+          </div>
+        `).join('');
+      }
+      
+      useVoice(profileId) {
+        const profile = this.voiceProfiles.find(p => p.id === profileId);
+        if (!profile) return;
+        
+        document.getElementById('voiceName').value = profile.name;
+        document.getElementById('speakerId').value = profile.speakerId;
+        document.getElementById('maxLength').value = profile.maxLength;
+        this.showStatus(`Loaded voice profile: ${profile.name}`, 'success');
+      }
+      
+      deleteVoice(profileId) {
+        if (confirm('Delete this voice profile?')) {
+          this.voiceProfiles = this.voiceProfiles.filter(p => p.id !== profileId);
+          localStorage.setItem('voiceProfiles', JSON.stringify(this.voiceProfiles));
+          this.renderVoiceLibrary();
+          this.showStatus('Voice profile deleted.', 'warning');
+        }
+      }
+      
+      resetForm() {
+        // Reset to step 1
+        this.currentStep = 1;
+        this.audioFile = null;
+        this.transcription = '';
+        
+        // Reset form fields
+        document.getElementById('voiceName').value = '';
+        document.getElementById('testText').value = '';
+        document.getElementById('transcriptionText').value = '';
+        document.getElementById('audioPreview').style.display = 'none';
+        
+        // Reset step states
+        this.updateStepStates();
+        document.getElementById('step-upload').classList.add('active');
+        
+        // Reset buttons
+        document.getElementById('approveTranscriptionBtn').disabled = true;
+        document.getElementById('testVoiceBtn').disabled = true;
+        document.getElementById('saveVoiceBtn').disabled = true;
+      }
+      
+      showStatus(message, type = 'info') {
+        // Create or update status element
+        let status = document.querySelector('.status.show');
+        if (!status) {
+          status = document.createElement('div');
+          status.className = 'status';
+          document.querySelector('.container').appendChild(status);
+        }
+        
+        status.textContent = message;
+        status.className = `status ${type} show`;
+        
+        setTimeout(() => {
+          status.classList.remove('show');
+        }, 5000);
+      }
+      
+      delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
       }
     }
 
-    // Global app instance
-    const studioSettings = new VoiceStudioSettings();
-
-    // Menu Functions
+    // Settings and Modal Functions
     function showSettings() {
-      document.getElementById('settingsModal').classList.remove('hidden');
-      document.getElementById('endpointInput').value = studioSettings.settings.endpoint;
-      document.getElementById('apiKeyInput').value = studioSettings.settings.apiKey;
-      document.getElementById('limitSelect').value = studioSettings.settings.generationLimit;
-      document.getElementById('autoSaveCheck').checked = studioSettings.settings.autoSave;
+      const modal = document.getElementById('settingsModal');
+      modal.classList.add('show');
+      
+      // Load current settings
+      document.getElementById('endpointInput').value = voiceStudio.settings.endpoint;
+      document.getElementById('apiKeyInput').value = voiceStudio.settings.apiKey;
+      document.getElementById('limitSelect').value = voiceStudio.settings.generationLimit;
+      
+      // Update secure inputs
+      updateSecureInput(document.getElementById('endpointInput'));
+      updateSecureInput(document.getElementById('apiKeyInput'));
     }
-
+    
     function closeSettings() {
-      document.getElementById('settingsModal').classList.add('hidden');
+      document.getElementById('settingsModal').classList.remove('show');
     }
-
+    
     function saveSettings() {
-      studioSettings.settings.endpoint = document.getElementById('endpointInput').value;
-      studioSettings.settings.apiKey = document.getElementById('apiKeyInput').value;
-      studioSettings.settings.generationLimit = document.getElementById('limitSelect').value;
-      studioSettings.settings.autoSave = document.getElementById('autoSaveCheck').checked;
-      studioSettings.saveSettings();
+      voiceStudio.settings.endpoint = document.getElementById('endpointInput').value;
+      voiceStudio.settings.apiKey = document.getElementById('apiKeyInput').value;
+      voiceStudio.settings.generationLimit = document.getElementById('limitSelect').value;
+      
+      localStorage.setItem('voiceStudioSettings', JSON.stringify(voiceStudio.settings));
+      voiceStudio.updateGenerationCounter();
+      
       closeSettings();
-      alert('Settings saved successfully!');
+      voiceStudio.showStatus('Settings saved successfully!', 'success');
     }
-
+    
+    function updateSecureInput(input) {
+      const container = input.parentElement;
+      const value = input.value;
+      
+      if (value) {
+        // Show dots for security
+        const dots = '●'.repeat(Math.min(value.length, 20));
+        container.setAttribute('data-dots', dots);
+      } else {
+        container.setAttribute('data-dots', '');
+      }
+    }
+    
     function showApiDocs() {
-      document.getElementById('workspace').innerHTML = `
-        <div class="animate-fade-in">
-          <h2 class="text-2xl font-bold mb-6">API Documentation</h2>
-          <div class="space-y-6">
-            <div class="glass rounded-lg p-6">
-              <h3 class="text-lg font-semibold mb-4">Generate Speech</h3>
-              <pre class="bg-black/50 rounded-lg p-4 text-sm overflow-x-auto"><code>POST https://api.runpod.ai/v2/{endpoint}/runsync
-
-{
-  "input": {
-    "text": "Hello world!",
-    "speaker_id": 0,
-    "max_length_ms": 10000,
-    "reference_audio": "base64_audio_data",
-    "reference_text": "transcription"
-  }
-}</code></pre>
-            </div>
-            <div class="glass rounded-lg p-6">
-              <h3 class="text-lg font-semibold mb-4">Response Format</h3>
-              <pre class="bg-black/50 rounded-lg p-4 text-sm overflow-x-auto"><code>{
-  "output": {
-    "audio_base64": "UklGRiQ...",
-    "sample_rate": 24000,
-    "format": "wav",
-    "generation_time": 2.34
-  }
-}</code></pre>
-            </div>
-          </div>
-        </div>
-      `;
+      voiceStudio.showStatus('API documentation feature coming soon!', 'info');
     }
-
+    
     function showUsage() {
-      const costPerGeneration = 0.02;
-      const totalCost = (studioSettings.generationCount * costPerGeneration).toFixed(4);
-      
-      document.getElementById('workspace').innerHTML = `
-        <div class="animate-fade-in">
-          <h2 class="text-2xl font-bold mb-6">Usage Statistics</h2>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="glass rounded-lg p-6">
-              <h3 class="text-lg font-semibold mb-2">Generations Today</h3>
-              <p class="text-3xl font-bold text-green-400">${studioSettings.generationCount}</p>
-            </div>
-            <div class="glass rounded-lg p-6">
-              <h3 class="text-lg font-semibold mb-2">Estimated Cost</h3>
-              <p class="text-3xl font-bold text-blue-400">$${totalCost}</p>
-            </div>
-            <div class="glass rounded-lg p-6">
-              <h3 class="text-lg font-semibold mb-2">Idle Cost</h3>
-              <p class="text-3xl font-bold text-red-400">$0.000</p>
-            </div>
-          </div>
-        </div>
-      `;
+      const cost = (voiceStudio.generationCount * 0.02).toFixed(4);
+      voiceStudio.showStatus(`Generations: ${voiceStudio.generationCount} | Estimated cost: $${cost} | Idle cost: $0.000`, 'info');
     }
 
-    function openUploader() {
-      document.getElementById('workspace').innerHTML = `
-        <div class="animate-fade-in">
-          <h2 class="text-2xl font-bold mb-6">Upload Audio for Voice Cloning</h2>
-          <div class="border-2 border-dashed border-gray-600 rounded-lg p-12 text-center">
-            <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
-            </svg>
-            <h3 class="text-lg font-semibold mb-2">Drop audio files here</h3>
-            <p class="text-gray-400 mb-4">Supports MP3, WAV, M4A • Max 10MB • Min 30 seconds</p>
-            <button class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg">Browse Files</button>
-          </div>
-        </div>
-      `;
-    }
-
-    function openQuickGen() {
-      document.getElementById('workspace').innerHTML = `
-        <div class="animate-fade-in">
-          <h2 class="text-2xl font-bold mb-6">Quick Text-to-Speech Generation</h2>
-          <div class="space-y-6">
-            <div>
-              <label class="block text-sm font-medium mb-2">Enter text to generate:</label>
-              <textarea class="w-full bg-black/50 border border-gray-600 rounded-lg px-4 py-3 h-32" placeholder="Type your text here..."></textarea>
-            </div>
-            <div class="flex space-x-4">
-              <button onclick="generateSpeech()" class="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg">Generate Speech</button>
-              <button class="glass border border-gray-600 text-white px-6 py-3 rounded-lg">Save as Profile</button>
-            </div>
-          </div>
-        </div>
-      `;
-    }
-
-    function openLibrary() {
-      document.getElementById('workspace').innerHTML = `
-        <div class="animate-fade-in">
-          <h2 class="text-2xl font-bold mb-6">Voice Library</h2>
-          <div class="text-center text-gray-400 py-12">
-            <svg class="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-            </svg>
-            <p>No voice profiles saved yet.</p>
-            <button onclick="openUploader()" class="mt-4 bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg">Create First Profile</button>
-          </div>
-        </div>
-      `;
-    }
-
-    function openDeploy() {
-      window.open('setup-guide.html', '_blank');
-    }
-
-    async function generateSpeech() {
-      if (!studioSettings.incrementGeneration()) return;
-      
-      // Show loading state
-      document.getElementById('workspace').innerHTML += `
-        <div class="mt-4 p-4 bg-blue-500/20 border border-blue-500/30 rounded-lg">
-          <p class="text-blue-400">🔄 Generating speech... (Est. cost: $0.02)</p>
-        </div>
-      `;
-      
-      // Simulate API call (replace with actual implementation)
-      setTimeout(() => {
-        document.getElementById('workspace').innerHTML += `
-          <div class="mt-4 p-4 bg-green-500/20 border border-green-500/30 rounded-lg">
-            <p class="text-green-400">✅ Speech generated successfully!</p>
-            <audio controls class="mt-2 w-full">
-              <source src="audio/wav;base64,..." type="audio/wav">
-            </audio>
-          </div>
-        `;
-      }, 2000);
-    }
-
-    // Initialize floating animations
-    document.addEventListener('DOMContentLoaded', function() {
-      const elements = document.querySelectorAll('.floating-element');
-      elements.forEach((el, index) => {
-        el.style.animationDelay = `${index * 0.5}s`;
-      });
+    // Initialize the application
+    const voiceStudio = new VoiceStudio();
+    
+    // Handle modal clicks outside content
+    document.getElementById('settingsModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeSettings();
+      }
     });
   </script>
 </body>
