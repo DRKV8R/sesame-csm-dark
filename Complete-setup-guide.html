@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RunPod Serverless Setup Guide - Sesame CSM 1B</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --glass-bg: rgba(0, 0, 0, 0.4);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --accent-red: #ef4444;
+      --accent-blue: #3b82f6;
+      --accent-green: #10b981;
+      --text-primary: #ffffff;
+      --text-secondary: #e5e7eb;
+      --text-muted: #9ca3af;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%);
+      color: var(--text-primary);
+      line-height: 1.6;
+    }
+
+    .glass {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 3rem;
+      padding: 3rem 0;
+    }
+
+    .title {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      font-size: 1.25rem;
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .quick-deploy {
+      padding: 2rem;
+      border-radius: 16px;
+      margin-bottom: 3rem;
+      border: 2px solid var(--accent-red);
+      background: rgba(239, 68, 68, 0.1);
+    }
+
+    .deploy-btn {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--accent-red), #dc2626);
+      color: white;
+      padding: 1rem 2rem;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1.125rem;
+      transition: all 0.3s ease;
+    }
+
+    .deploy-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(239, 68, 68, 0.4);
+    }
+
+    .section {
+      margin-bottom: 3rem;
+      padding: 2rem;
+      border-radius: 16px;
+    }
+
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .step {
+      margin-bottom: 2rem;
+      padding: 1.5rem;
+      border-radius: 12px;
+      border-left: 4px solid var(--accent-blue);
+      background: rgba(59, 130, 246, 0.1);
+    }
+
+    .step-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: var(--accent-blue);
+    }
+
+    .code-block {
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid var(--glass-border);
+      border-radius: 8px;
+      padding: 1rem;
+      font-family: 'SF Mono', Monaco, monospace;
+      font-size: 0.875rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+    }
+
+    .warning {
+      background: rgba(245, 158, 11, 0.2);
+      border: 1px solid #f59e0b;
+      color: #fbbf24;
+      padding: 1rem;
+      border-radius: 8px;
+      margin: 1rem 0;
+    }
+
+    .success {
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid var(--accent-green);
+      color: var(--accent-green);
+      padding: 1rem;
+      border-radius: 8px;
+      margin: 1rem 0;
+    }
+
+    .cost-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+
+    .cost-card {
+      text-align: center;
+      padding: 2rem;
+      border-radius: 12px;
+      border: 1px solid var(--glass-border);
+    }
+
+    .cost-number {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .cost-label {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+    }
+
+    @media (max-width: 768px) {
+      .container { padding: 1rem; }
+      .title { font-size: 2rem; }
+      .cost-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <h1 class="title">🚀 RunPod Serverless Setup</h1>
+      <p class="subtitle">
+        Deploy Sesame CSM 1B with zero idle costs. Complete serverless voice cloning in minutes.
+      </p>
+    </div>
+
+    <!-- Quick Deploy -->
+    <div class="quick-deploy glass">
+      <h2 style="font-size: 1.5rem; font-weight: 600; margin-bottom: 1rem;">
+        🔥 One-Click Serverless Deploy
+      </h2>
+      <p style="margin-bottom: 1.5rem; color: var(--text-secondary);">
+        Skip manual setup with our pre-configured serverless template:
+      </p>
+      <a href="https://runpod.io/console/serverless/deploy?image=davidhamilton/sesame-csm:latest&name=Sesame-CSM-Voice-Studio&containerDisk=20&env=MODEL_REPO:BiggestLab/csm-1b&env=DEFAULT_SPEAKER_ID:0&env=MAX_LENGTH_MS:30000&env=GENERATION_LIMIT:100&repo=https://github.com/drkv8r/sesame-csm-dark" 
+         target="_blank" class="deploy-btn">
+        🚀 Deploy Serverless Now
+      </a>
+    </div>
+
+    <!-- Manual Setup -->
+    <div class="section glass">
+      <h2 class="section-title">
+        <span style="background: var(--accent-blue); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem;">1</span>
+        Create Serverless Endpoint
+      </h2>
+
+      <div class="step">
+        <h3 class="step-title">Navigate to Serverless Section</h3>
+        <p>In RunPod Console, go to <strong>Serverless</strong> (not Pods) → <strong>New Endpoint</strong></p>
+      </div>
+
+      <div class="step">
+        <h3 class="step-title">Configure Container Settings</h3>
+        <ul style="margin-left: 1.5rem; color: var(--text-secondary);">
+          <li><strong>Container Image:</strong> <code>davidhamilton/sesame-csm:latest</code></li>
+          <li><strong>Container Disk:</strong> 20GB (ephemeral)</li>
+          <li><strong>Volume Disk:</strong> 0GB (not needed)</li>
+          <li><strong>GPU:</strong> NVIDIA A40 or RTX 4090</li>
+          <li><strong>Idle Timeout:</strong> 60 seconds</li>
+        </ul>
+      </div>
+
+      <div class="step">
+        <h3 class="step-title">Environment Variables</h3>
+        <div class="code-block">MODEL_REPO=BiggestLab/csm-1b
+DEFAULT_SPEAKER_ID=0
+MAX_LENGTH_MS=30000
+GENERATION_LIMIT=100
+NO_TORCH_COMPILE=1
+FFMPEG_BINARY=/usr/bin/ffmpeg</div>
+      </div>
+    </div>
+
+    <!-- API Integration -->
+    <div class="section glass">
+      <h2 class="section-title">
+        <span style="background: var(--accent-green); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem;">2</span>
+        API Integration
+      </h2>
+
+      <div class="step">
+        <h3 class="step-title">Basic API Call</h3>
+        <div class="code-block">curl -X POST https://api.runpod.ai/v2/YOUR_ENDPOINT_ID/runsync \
+  -H 'Content-Type: application/json' \
+  -H 'Authorization: Bearer YOUR_API_KEY' \
+  -d '{
+    "input": {
+      "text": "Hello from your voice clone!",
+      "speaker_id": 0,
+      "max_length_ms": 10000
+    }
+  }'</div>
+      </div>
+
+      <div class="step">
+        <h3 class="step-title">JavaScript Integration</h3>
+        <div class="code-block">async function generateSpeech(text) {
+  const response = await fetch(`https://api.runpod.ai/v2/${ENDPOINT_ID}/runsync`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${API_KEY}`
+    },
+    body: JSON.stringify({
+      input: { text, speaker_id: 0, max_length_ms: 10000 }
+    })
+  });
+  
+  const result = await response.json();
+  if (result.output?.audio_base64) {
+    const audio = new Audio(`data:audio/wav;base64,${result.output.audio_base64}`);
+    audio.play();
+  }
+}</div>
+      </div>
+    </div>
+
+    <!-- Cost Breakdown -->
+    <div class="section glass">
+      <h2 class="section-title">
+        <span style="background: var(--accent-red); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem;">💰</span>
+        Serverless Cost Breakdown
+      </h2>
+
+      <div class="cost-grid">
+        <div class="cost-card glass">
+          <div class="cost-number" style="color: var(--accent-green);">$0.000</div>
+          <div class="cost-label">Idle Cost Per Hour</div>
+        </div>
+        
+        <div class="cost-card glass">
+          <div class="cost-number" style="color: var(--accent-blue);">~$0.02</div>
+          <div class="cost-label">Per Generation</div>
+        </div>
+        
+        <div class="cost-card glass">
+          <div class="cost-number" style="color: var(--accent-red);">15-30s</div>
+          <div class="cost-label">Cold Start Time</div>
+        </div>
+        
+        <div class="cost-card glass">
+          <div class="cost-number" style="color: var(--text-primary);">2-5s</div>
+          <div class="cost-label">Inference Time</div>
+        </div>
+      </div>
+
+      <div class="success">
+        <strong>✅ Zero Idle Guarantee:</strong> Unlike Pods, serverless endpoints automatically scale to zero when not processing requests. You are only billed for actual compute time during cold starts and inference.
+      </div>
+    </div>
+
+    <!-- Best Practices -->
+    <div class="section glass">
+      <h2 class="section-title">
+        <span style="background: var(--accent-blue); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem;">⚡</span>
+        Voice Quality Best Practices
+      </h2>
+
+      <div class="step">
+        <h3 class="step-title">Audio Requirements</h3>
+        <ul style="margin-left: 1.5rem; color: var(--text-secondary);">
+          <li><strong>Duration:</strong> 30 seconds minimum, 2-3 minutes ideal</li>
+          <li><strong>Quality:</strong> Clear, single speaker, no background noise</li>
+          <li><strong>Format:</strong> WAV, MP3, or FLAC at 44.1kHz or higher</li>
+          <li><strong>Content:</strong> Natural speech, varied intonation</li>
+        </ul>
+      </div>
+
+      <div class="step">
+        <h3 class="step-title">Recording Tips</h3>
+        <ul style="margin-left: 1.5rem; color: var(--text-secondary);">
+          <li>Record in a quiet room with soft furnishings</li>
+          <li>Use a decent microphone 6-12 inches from your mouth</li>
+          <li>Speak naturally - avoid over-enunciating</li>
+          <li>Include varied emotions and speaking styles</li>
+          <li>Avoid pitch correction or heavy processing</li>
+        </ul>
+      </div>
+
+      <div class="step">
+        <h3 class="step-title">Common Issues to Avoid</h3>
+        <div class="warning">
+          <strong>⚠️ Warning:</strong> Avoid compressed audio (highly compressed MP3s), recordings with reverb/echo, multiple speakers, background music, or heavily auto-tuned vocals. These will significantly reduce clone quality.
+        </div>
+      </div>
+    </div>
+
+    <!-- Troubleshooting -->
+    <div class="section glass">
+      <h2 class="section-title">
+        <span style="background: var(--accent-red); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem;">🔧</span>
+        Troubleshooting
+      </h2>
+
+      <div class="step">
+        <h3 class="step-title">Deployment Issues</h3>
+        <ul style="margin-left: 1.5rem; color: var(--text-secondary);">
+          <li><strong>Image not found:</strong> Ensure you're using <code>davidhamilton/sesame-csm:latest</code></li>
+          <li><strong>Container disk full:</strong> Increase to 25GB if needed</li>
+          <li><strong>GPU unavailable:</strong> Try different regions or GPU types</li>
+        </ul>
+      </div>
+
+      <div class="step">
+        <h3 class="step-title">API Errors</h3>
+        <ul style="margin-left: 1.5rem; color: var(--text-secondary);">
+          <li><strong>401 Unauthorized:</strong> Check your API key and endpoint ID</li>
+          <li><strong>503 Service Unavailable:</strong> Endpoint is cold starting (wait 15-30s)</li>
+          <li><strong>Timeout:</strong> Reduce max_length_ms or try shorter text</li>
+        </ul>
+      </div>
+
+      <div class="step">
+        <h3 class="step-title">Generation Limits</h3>
+        <div class="code-block">// Check current usage
+{
+  "generations_used": 45,
+  "daily_limit": 100,
+  "cost_estimate": "$0.90",
+  "idle_cost": "$0.000"
+}</div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div style="text-align: center; padding: 2rem; border-top: 1px solid var(--glass-border); margin-top: 3rem;">
+      <p style="color: var(--text-muted);">
+        Created by <strong>David Hamilton 2025</strong> • 
+        <a href="https://github.com/drkv8r/sesame-csm-dark" style="color: var(--accent-red); text-decoration: none;">
+          View Source Code
+        </a>
+      </p>
+    </div>
+  </div>
+</body>
+</html>
