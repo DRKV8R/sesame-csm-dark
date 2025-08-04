@@ -1,4 +1,4 @@
-## ⚡ Try it on RunPod (with my referral!)
+## ⚡ Try it on RunPod
 
 [Deploy AI on RunPod](https://runpod.io?ref=opvjdbzf)
 
