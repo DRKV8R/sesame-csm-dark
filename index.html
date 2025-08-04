@@ -3,63 +3,35 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sesame CSM 1B Voice Studio - Professional Voice Cloning</title>
+  <title>AI Assistant Studio - Professional Voice & Video Training Platform</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.dots.min.js"></script>
   <style>
     :root {
       --glass-bg: rgba(0, 0, 0, 0.4);
       --glass-border: rgba(255, 255, 255, 0.1);
-      --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-      --accent-red: #ef4444;
       --accent-blue: #3b82f6;
-      --text-primary: #ffffff;
-      --text-secondary: #e5e7eb;
-      --text-muted: #9ca3af;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+      --accent-purple: #8b5cf6;
+      --accent-green: #10b981;
     }
 
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%);
-      color: var(--text-primary);
-      min-height: 100vh;
+      background: #000000;
+      color: #ffffff;
       overflow-x: hidden;
-      position: relative;
     }
 
-    /* Advanced Glassmorphism Effects */
     .glass {
       background: var(--glass-bg);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border: 1px solid var(--glass-border);
-      box-shadow: var(--glass-shadow);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     }
 
-    .glass-intense {
-      background: rgba(0, 0, 0, 0.6);
-      backdrop-filter: blur(30px);
-      -webkit-backdrop-filter: blur(30px);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
-    }
-
-    .glass-card {
-      background: rgba(0, 0, 0, 0.3);
-      backdrop-filter: blur(15px);
-      -webkit-backdrop-filter: blur(15px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: 
-        0 4px 20px rgba(0, 0, 0, 0.2),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    }
-
-    /* Floating Animations */
     @keyframes float {
       0%, 100% { transform: translateY(0) rotate(0deg); }
       50% { transform: translateY(-15px) rotate(1deg); }
@@ -67,424 +39,207 @@
 
     @keyframes pulse-glow {
       0%, 100% { 
-        box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+        box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
         transform: scale(1);
       }
       50% { 
-        box-shadow: 0 0 40px rgba(239, 68, 68, 0.6);
+        box-shadow: 0 0 40px rgba(59, 130, 246, 0.6);
         transform: scale(1.02);
       }
     }
 
-    @keyframes gradient-shift {
-      0%, 100% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-    }
-
-    @keyframes refract {
-      0% { filter: hue-rotate(0deg); }
-      100% { filter: hue-rotate(360deg); }
-    }
-
-    /* Background Effects */
-    .bg-pattern {
-      position: fixed;
-      inset: 0;
-      background: 
-        radial-gradient(circle at 20% 30%, rgba(239, 68, 68, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 80% 70%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
-        linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.02) 50%, transparent 70%);
-      animation: refract 20s linear infinite;
-      z-index: -1;
-    }
-
-    /* Floating Elements */
     .floating {
       animation: float 6s ease-in-out infinite;
     }
 
-    .floating:nth-child(2) { animation-delay: -1s; }
-    .floating:nth-child(3) { animation-delay: -2s; }
-    .floating:nth-child(4) { animation-delay: -3s; }
-
-    /* Main Container */
-    .container {
-      position: relative;
-      z-index: 10;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem;
-    }
-
-    .content {
-      width: 100%;
-      max-width: 1200px;
-    }
-
-    /* Header Section */
-    .header {
-      text-align: center;
-      margin-bottom: 4rem;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.75rem 1.5rem;
-      margin-bottom: 2rem;
-      border-radius: 50px;
-      font-size: 0.875rem;
-      font-weight: 500;
-      transition: all 0.3s ease;
-    }
-
-    .badge.glass {
+    .deploy-btn {
       animation: pulse-glow 4s ease-in-out infinite;
-    }
-
-    .title {
-      font-size: clamp(3rem, 8vw, 6rem);
-      font-weight: 700;
-      margin-bottom: 1.5rem;
-      background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      line-height: 1.1;
-    }
-
-    .subtitle {
-      font-size: 1.25rem;
-      color: var(--text-secondary);
-      max-width: 600px;
-      margin: 0 auto 3rem;
-      line-height: 1.6;
-    }
-
-    /* Action Buttons */
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      justify-content: center;
-      margin-bottom: 4rem;
-    }
-
-    .btn {
-      padding: 1rem 2rem;
-      border-radius: 12px;
-      font-weight: 600;
-      font-size: 1rem;
-      text-decoration: none;
-      transition: all 0.3s ease;
-      cursor: pointer;
-      border: none;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, var(--accent-red), #dc2626);
-      color: white;
-      animation: pulse-glow 4s ease-in-out infinite;
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 40px rgba(239, 68, 68, 0.4);
-    }
-
-    .btn-secondary {
-      color: white;
-      border: 1px solid var(--glass-border);
-    }
-
-    .btn-secondary.glass:hover {
-      background: rgba(255, 255, 255, 0.1);
-      transform: translateY(-2px);
-    }
-
-    /* Feature Grid */
-    .features {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 2rem;
-      margin-bottom: 4rem;
-    }
-
-    .feature-card {
-      padding: 2.5rem;
-      border-radius: 20px;
-      transition: all 0.3s ease;
-      position: relative;
-    }
-
-    .feature-card.floating:hover {
-      transform: translateY(-20px);
-    }
-
-    .feature-icon {
-      width: 60px;
-      height: 60px;
-      border-radius: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-      margin-bottom: 1.5rem;
-      position: relative;
-    }
-
-    .feature-icon.red { background: linear-gradient(135deg, var(--accent-red), #dc2626); }
-    .feature-icon.blue { background: linear-gradient(135deg, var(--accent-blue), #2563eb); }
-    .feature-icon.green { background: linear-gradient(135deg, #10b981, #059669); }
-    .feature-icon.purple { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
-
-    .feature-title {
-      font-size: 1.25rem;
-      font-weight: 600;
-      margin-bottom: 1rem;
-      color: var(--text-primary);
-    }
-
-    .feature-description {
-      color: var(--text-secondary);
-      line-height: 1.6;
-    }
-
-    /* Stats Section */
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 2rem;
-      margin: 4rem 0;
-    }
-
-    .stat-card {
-      text-align: center;
-      padding: 2rem;
-      border-radius: 16px;
-    }
-
-    .stat-number {
-      font-size: 2.5rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-    }
-
-    .stat-label {
-      color: var(--text-muted);
-      font-size: 0.875rem;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    /* Footer */
-    .footer {
-      text-align: center;
-      padding-top: 2rem;
-      border-top: 1px solid var(--glass-border);
-      color: var(--text-muted);
-    }
-
-    /* Responsive Design */
-    @media (max-width: 768px) {
-      .container { padding: 1rem; }
-      .features { grid-template-columns: 1fr; }
-      .actions { flex-direction: column; align-items: center; }
-      .btn { width: 100%; max-width: 300px; }
-    }
-
-    /* Loading State */
-    .loading {
-      opacity: 0;
-      animation: fadeIn 0.8s ease-out forwards;
-    }
-
-    @keyframes fadeIn {
-      to { opacity: 1; }
     }
   </style>
 </head>
-<body>
-  <div class="bg-pattern"></div>
-  
-  <div class="container loading">
-    <div class="content">
+<body class="min-h-screen">
+  <!-- Background Animation -->
+  <div id="vanta-bg" class="fixed inset-0 z-0"></div>
+
+  <!-- Main Content -->
+  <div class="relative z-10 min-h-screen flex items-center justify-center p-4">
+    <div class="max-w-6xl mx-auto text-center">
+      
       <!-- Header -->
-      <div class="header">
-        <div class="badge glass floating">
-          <div style="width: 8px; height: 8px; background: var(--accent-red); border-radius: 50%; animation: pulse-glow 2s infinite;"></div>
-          Zero Idle Cost Serverless
+      <div class="mb-12">
+        <div class="glass inline-flex items-center gap-2 px-6 py-3 rounded-full mb-8 floating">
+          <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+          <span class="text-sm font-medium">Zero Idle Cost Serverless</span>
         </div>
         
-        <h1 class="title">🎙️ Sesame CSM 1B</h1>
+        <h1 class="text-6xl md:text-8xl font-bold mb-6 bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400 bg-clip-text text-transparent">
+          AI Assistant Studio
+        </h1>
         
-        <p class="subtitle">
-          Professional voice cloning with advanced AI. Deploy in seconds, pay only for inference. 
-          <strong>$0.000 when idle</strong> — true serverless architecture.
+        <p class="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto mb-8">
+          Build professional AI assistants with advanced voice cloning and video generation. 
+          Train custom models, deploy instantly, pay only for usage.
         </p>
-        
-        <div class="actions">
-          <a href="voice-studio.html" class="btn btn-primary">
-            Open Voice Studio
-          </a>
-          <button onclick="deployServerless()" class="btn btn-secondary glass">
-            🚀 Deploy to RunPod
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+        <div class="glass rounded-2xl p-8 floating">
+          <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span class="text-2xl">🎙️</span>
+          </div>
+          <h3 class="text-xl font-semibold mb-3">Voice Cloning</h3>
+          <p class="text-gray-400 mb-6">Train Sesame CSM models with 30s of audio. Professional quality voice synthesis.</p>
+          <button onclick="openStudio()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-lg font-medium transition">
+            Start Training
+          </button>
+        </div>
+
+        <div class="glass rounded-2xl p-8 floating" style="animation-delay: -1s;">
+          <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span class="text-2xl">🎬</span>
+          </div>
+          <h3 class="text-xl font-semibold mb-3">Video Generation</h3>
+          <p class="text-gray-400 mb-6">Create consistent character videos with WAN 2.1 and custom LoRA training.</p>
+          <button onclick="openStudio()" class="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 px-6 rounded-lg font-medium transition">
+            Generate Videos
+          </button>
+        </div>
+
+        <div class="glass rounded-2xl p-8 floating" style="animation-delay: -2s;">
+          <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span class="text-2xl">🤖</span>
+          </div>
+          <h3 class="text-xl font-semibold mb-3">AI Assistant</h3>
+          <p class="text-gray-400 mb-6">Combine voice and video for complete AI assistant presentations.</p>
+          <button onclick="openStudio()" class="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-lg font-medium transition">
+            Build Assistant
           </button>
         </div>
       </div>
 
-      <!-- Features Grid -->
-      <div class="features">
-        <div class="feature-card glass-card floating">
-          <div class="feature-icon red">🎭</div>
-          <h3 class="feature-title">Voice Cloning</h3>
-          <p class="feature-description">
-            Clone any voice with 30 seconds of clear audio. Advanced neural networks capture tone, accent, and speaking style.
-          </p>
+      <!-- Deploy Section -->
+      <div class="glass rounded-3xl p-12 mb-16">
+        <h2 class="text-3xl font-bold mb-8">🚀 One-Click Serverless Deployment</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          <!-- Voice Model Deploy -->
+          <div class="bg-gradient-to-br from-blue-500/20 to-blue-600/20 rounded-2xl p-8 border border-blue-500/30">
+            <h3 class="text-xl font-semibold mb-4 text-blue-300">Voice Model (Sesame CSM)</h3>
+            <ul class="text-sm text-gray-300 mb-6 space-y-2">
+              <li>• Voice cloning with LoRA training</li>
+              <li>• 24kHz professional audio output</li>
+              <li>• ~$0.02 per generation</li>
+              <li>• $0.000 idle cost</li>
+            </ul>
+            <a href="https://runpod.io/console/serverless/deploy?image=davidhamilton/sesame-csm:latest&name=Voice-AI-Studio&containerDisk=20&env=VOICE_MODEL_REPO:BiggestLab/csm-1b&env=GENERATION_LIMIT:100&repo=https://github.com/drkv8r/sesame-csm-dark&ref=opvjdbzf" 
+               target="_blank" 
+               class="deploy-btn block w-full bg-blue-600 hover:bg-blue-700 text-white py-4 px-6 rounded-lg font-semibold text-center transition">
+              🚀 Deploy Voice Model
+            </a>
+          </div>
+
+          <!-- Video Model Deploy -->
+          <div class="bg-gradient-to-br from-purple-500/20 to-purple-600/20 rounded-2xl p-8 border border-purple-500/30">
+            <h3 class="text-xl font-semibold mb-4 text-purple-300">Video Model (WAN 2.1)</h3>
+            <ul class="text-sm text-gray-300 mb-6 space-y-2">
+              <li>• Character-consistent video generation</li>
+              <li>• LoRA training for custom characters</li>
+              <li>• ~$0.10 per 4-second video</li>
+              <li>• $0.000 idle cost</li>
+            </ul>
+            <a href="https://runpod.io/console/serverless/deploy?image=davidhamilton/unified-ai:latest&name=Video-AI-Studio&containerDisk=25&env=VIDEO_MODEL_PATH:Wan-AI/Wan2.1-T2V-1.3B&env=GENERATION_LIMIT:50&repo=https://github.com/drkv8r/sesame-csm-dark&ref=opvjdbzf" 
+               target="_blank" 
+               class="deploy-btn block w-full bg-purple-600 hover:bg-purple-700 text-white py-4 px-6 rounded-lg font-semibold text-center transition">
+              🚀 Deploy Video Model
+            </a>
+          </div>
         </div>
 
-        <div class="feature-card glass-card floating">
-          <div class="feature-icon blue">💰</div>
-          <h3 class="feature-title">Zero Idle Cost</h3>
-          <p class="feature-description">
-            True serverless billing. Pay only during inference processing. No charges when your endpoint is inactive.
-          </p>
-        </div>
-
-        <div class="feature-card glass-card floating">
-          <div class="feature-icon green">⚡</div>
-          <h3 class="feature-title">Ultra Fast</h3>
-          <p class="feature-description">
-            2-5 second inference, 15-30 second cold start with FlashBoot optimization. FFmpeg-enhanced audio processing.
-          </p>
-        </div>
-
-        <div class="feature-card glass-card floating">
-          <div class="feature-icon purple">🔌</div>
-          <h3 class="feature-title">REST API Ready</h3>
-          <p class="feature-description">
-            Complete JSON API with base64 audio output. Perfect for web apps, mobile apps, and automation workflows.
+        <div class="mt-8 p-4 bg-green-500/20 rounded-lg border border-green-500/30">
+          <p class="text-green-300 text-sm">
+            <strong>💡 Pro Tip:</strong> Deploy both models for complete AI assistant capabilities. 
+            Total setup time: ~5 minutes. No ongoing costs when idle.
           </p>
         </div>
       </div>
 
-      <!-- Stats Section -->
-      <div class="stats">
-        <div class="stat-card glass-card">
-          <div class="stat-number" style="color: var(--accent-red);">$0.000</div>
-          <div class="stat-label">Idle Cost Per Hour</div>
+      <!-- Stats -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
+        <div class="glass rounded-xl p-6 text-center">
+          <div class="text-3xl font-bold text-blue-400 mb-2">$0.000</div>
+          <div class="text-sm text-gray-400">Idle Cost/Hour</div>
         </div>
-        
-        <div class="stat-card glass-card">
-          <div class="stat-number" style="color: var(--accent-blue);">~$0.02</div>
-          <div class="stat-label">Per Generation</div>
+        <div class="glass rounded-xl p-6 text-center">
+          <div class="text-3xl font-bold text-purple-400 mb-2">2-5s</div>
+          <div class="text-sm text-gray-400">Generation Time</div>
         </div>
-        
-        <div class="stat-card glass-card">
-          <div class="stat-number" style="color: var(--accent-green);">2-5s</div>
-          <div class="stat-label">Inference Time</div>
+        <div class="glass rounded-xl p-6 text-center">
+          <div class="text-3xl font-bold text-green-400 mb-2">24kHz</div>
+          <div class="text-sm text-gray-400">Audio Quality</div>
         </div>
-        
-        <div class="stat-card glass-card">
-          <div class="stat-number" style="color: var(--accent-purple);">24kHz</div>
-          <div class="stat-label">Audio Quality</div>
+        <div class="glass rounded-xl p-6 text-center">
+          <div class="text-3xl font-bold text-red-400 mb-2">512p</div>
+          <div class="text-sm text-gray-400">Video Resolution</div>
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <div class="glass rounded-2xl p-8">
+        <h2 class="text-2xl font-bold mb-4">Ready to Build Your AI Assistant?</h2>
+        <p class="text-gray-300 mb-6 max-w-2xl mx-auto">
+          Join the future of AI-powered presentations. Create professional voice and video content 
+          that showcases your technical expertise to hiring managers.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <button onclick="openStudio()" class="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-3 px-8 rounded-lg font-semibold transition">
+            Open Studio
+          </button>
+          <a href="https://github.com/drkv8r/sesame-csm-dark" target="_blank" class="border border-gray-600 hover:border-gray-500 text-gray-300 hover:text-white py-3 px-8 rounded-lg font-semibold transition">
+            View Source
+          </a>
         </div>
       </div>
 
       <!-- Footer -->
-      <div class="footer glass-card">
-        <p>
-          Created by <strong>David Hamilton 2025</strong> • 
-          <a href="https://github.com/drkv8r/sesame-csm-dark" style="color: var(--accent-red); text-decoration: none;">
-            View Source Code
-          </a>
-        </p>
+      <div class="mt-16 text-center text-gray-500">
+        <p>Created by <strong class="text-white">David Hamilton 2025</strong> • Powered by RunPod Serverless</p>
       </div>
     </div>
   </div>
 
   <script>
-    // Deploy to RunPod Serverless (not Pods)
-    function deployServerless() {
-      // Analytics tracking
-      if (typeof gtag !== 'undefined') {
-        gtag('event', 'serverless_deploy_click', {
-          'event_category': 'deployment',
-          'event_label': 'sesame-csm-1b-serverless'
-        });
-      }
-      
-      // Open RunPod Serverless deployment with pre-configured settings
-      const deployUrl = [
-        'https://runpod.io/console/serverless/deploy',
-        '?image=davidhamilton/sesame-csm:latest',
-        '&name=Sesame-CSM-Voice-Studio',
-        '&containerDisk=20',
-        '&env=MODEL_REPO:BiggestLab/csm-1b',
-        '&env=DEFAULT_SPEAKER_ID:0',
-        '&env=MAX_LENGTH_MS:30000',
-        '&env=GENERATION_LIMIT:100',
-        '&repo=https://github.com/drkv8r/sesame-csm-dark'
-      ].join('');
-      
-      window.open(deployUrl, '_blank');
-    }
-
-    // Initialize animations and effects
+    // Initialize background
     document.addEventListener('DOMContentLoaded', function() {
-      // Stagger animation delays for floating elements
-      const floatingElements = document.querySelectorAll('.floating');
-      floatingElements.forEach((el, index) => {
-        el.style.animationDelay = `${index * 0.5}s`;
-      });
-
-      // Add intersection observer for scroll animations
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-          }
-        });
-      });
-
-      // Observe all feature cards
-      document.querySelectorAll('.feature-card').forEach(card => {
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(20px)';
-        card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        observer.observe(card);
-      });
-
-      // Advanced glassmorphism effect on mouse move
-      document.addEventListener('mousemove', (e) => {
-        const cards = document.querySelectorAll('.glass-card');
-        const x = e.clientX / window.innerWidth;
-        const y = e.clientY / window.innerHeight;
-        
-        cards.forEach((card, index) => {
-          const rect = card.getBoundingClientRect();
-          const cardX = (rect.left + rect.width / 2) / window.innerWidth;
-          const cardY = (rect.top + rect.height / 2) / window.innerHeight;
-          
-          const distance = Math.sqrt((x - cardX) ** 2 + (y - cardY) ** 2);
-          const intensity = Math.max(0, 1 - distance * 2);
-          
-          if (intensity > 0) {
-            card.style.boxShadow = `
-              0 4px 20px rgba(0, 0, 0, 0.2),
-              inset 0 1px 0 rgba(255, 255, 255, ${0.1 + intensity * 0.1}),
-              0 0 ${20 + intensity * 20}px rgba(239, 68, 68, ${intensity * 0.3})
-            `;
-          }
-        });
+      VANTA.DOTS({
+        el: "#vanta-bg",
+        mouseControls: true,
+        touchControls: true,
+        gyroControls: false,
+        minHeight: 200,
+        minWidth: 200,
+        scale: 1.00,
+        scaleMobile: 1.00,
+        color: 0x3b82f6,
+        color2: 0x8b5cf6,
+        backgroundColor: 0x000000,
+        size: 2.0,
+        spacing: 18,
+        showLines: true
       });
     });
+
+    function openStudio() {
+      window.location.href = 'voice-studio.html';
+    }
+
+    // Analytics tracking
+    function trackDeploy(model) {
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'deploy_click', {
+          'event_category': 'deployment',
+          'event_label': model
+        });
+      }
+    }
   </script>
-</body>
-</html>
