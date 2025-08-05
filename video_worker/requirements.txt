@@ -32,3 +32,4 @@ packaging>=23.0
 # Hugging Face
 huggingface_hub>=0.20.0
 safetensors>=0.4.0
+
