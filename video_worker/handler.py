@@ -119,3 +119,4 @@ def handler(event: Dict[str, Any]) -> Dict[str, Any]:
 
 if __name__ == "__main__":
     runpod.serverless.start({"handler": handler})
+    
