@@ -1,433 +1,695 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Assistant Studio - Professional Voice & Video Training Platform</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    :root {
-      --glass-bg: rgba(0, 0, 0, 0.3);
-      --glass-border: rgba(255, 255, 255, 0.1);
-      --accent-blue: #3b82f6;
-      --accent-purple: #8b5cf6;
-      --accent-green: #10b981;
-      --accent-red: #ef4444;
-    }
-
-    body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: linear-gradient(135deg, #000000 0%, #0f0f0f 25%, #1a1a1a 50%, #0f0f0f 75%, #000000 100%);
-      color: #ffffff;
-      overflow-x: hidden;
-      min-height: 100vh;
-    }
-
-    /* Pure Glassmorphism */
-    .glass {
-      background: var(--glass-bg);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid var(--glass-border);
-      box-shadow: 
-        0 8px 32px rgba(0, 0, 0, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
-      transition: all 0.3s ease;
-    }
-
-    /* Edge Glow Effects */
-    .glass-blue {
-      border: 1px solid rgba(59, 130, 246, 0.2);
-    }
-
-    .glass-blue:hover {
-      border-color: rgba(59, 130, 246, 0.6);
-      box-shadow: 
-        0 8px 32px rgba(0, 0, 0, 0.3),
-        0 0 20px rgba(59, 130, 246, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
-      transform: translateY(-2px);
-    }
-
-    .glass-purple {
-      border: 1px solid rgba(139, 92, 246, 0.2);
-    }
-
-    .glass-purple:hover {
-      border-color: rgba(139, 92, 246, 0.6);
-      box-shadow: 
-        0 8px 32px rgba(0, 0, 0, 0.3),
-        0 0 20px rgba(139, 92, 246, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
-      transform: translateY(-2px);
-    }
-
-    .glass-green {
-      border: 1px solid rgba(16, 185, 129, 0.2);
-    }
-
-    .glass-green:hover {
-      border-color: rgba(16, 185, 129, 0.6);
-      box-shadow: 
-        0 8px 32px rgba(0, 0, 0, 0.3),
-        0 0 20px rgba(16, 185, 129, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
-      transform: translateY(-2px);
-    }
-
-    .glass-red {
-      border: 1px solid rgba(239, 68, 68, 0.2);
-    }
-
-    .glass-red:hover {
-      border-color: rgba(239, 68, 68, 0.6);
-      box-shadow: 
-        0 8px 32px rgba(0, 0, 0, 0.3),
-        0 0 20px rgba(239, 68, 68, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
-      transform: translateY(-2px);
-    }
-
-    /* Subtle Animations */
-    @keyframes float {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-8px); }
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes pulse-border {
-      0%, 100% { border-color: rgba(59, 130, 246, 0.3); }
-      50% { border-color: rgba(59, 130, 246, 0.8); }
-    }
-
-    .floating {
-      animation: float 6s ease-in-out infinite;
-    }
-
-    .fade-in {
-      animation: fadeIn 0.8s ease-out;
-    }
-
-    .deploy-glow {
-      animation: pulse-border 3s ease-in-out infinite;
-    }
-
-    /* Button Styles */
-    .btn {
-      padding: 0.75rem 1.5rem;
-      border-radius: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      border: none;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .btn::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-      transition: left 0.5s;
-    }
-
-    .btn:hover::before {
-      left: 100%;
-    }
-
-    /* Special Deploy Button */
-    .deploy-btn {
-      background: var(--glass-bg);
-      border: 2px solid rgba(59, 130, 246, 0.3);
-      color: white;
-      font-weight: 700;
-      padding: 1rem 2rem;
-      position: relative;
-    }
-
-    .deploy-btn:hover {
-      border-color: rgba(59, 130, 246, 0.8);
-      box-shadow: 
-        0 4px 20px rgba(59, 130, 246, 0.4),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
-      transform: translateY(-2px);
-    }
-
-    /* Background Pattern */
-    .bg-pattern {
-      position: fixed;
-      inset: 0;
-      background: 
-        radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
-        radial-gradient(circle at 80% 70%, rgba(139, 92, 246, 0.05) 0%, transparent 50%),
-        radial-gradient(circle at 40% 80%, rgba(16, 185, 129, 0.03) 0%, transparent 50%);
-      z-index: -1;
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-      .floating { animation: none; }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sesame CSM Dark - AI Voice & Video Portfolio</title>
+    <meta name="description" content="Event-grade AI voice and video generation portfolio by David Hamilton, built in collaboration with Perplexity AI"/>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        .font-jakarta { font-family: 'Plus Jakarta Sans', sans-serif !important; }
+        
+        /* Animation Styles */
+        .slide-in-left {
+            opacity: 0;
+            transform: translateX(-50px);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .slide-in-right {
+            opacity: 0;
+            transform: translateX(50px);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .slide-in-up {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .scale-in {
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .fade-in {
+            opacity: 0;
+            transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .animate-in {
+            opacity: 1;
+            transform: translateX(0) translateY(0) scale(1);
+        }
+        
+        /* Stagger delays */
+        .delay-100 { transition-delay: 0.1s; }
+        .delay-200 { transition-delay: 0.2s; }
+        .delay-300 { transition-delay: 0.3s; }
+        .delay-400 { transition-delay: 0.4s; }
+        .delay-500 { transition-delay: 0.5s; }
+        .delay-600 { transition-delay: 0.6s; }
+        .delay-700 { transition-delay: 0.7s; }
+        .delay-800 { transition-delay: 0.8s; }
+        
+        /* Loading animation */
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #374151;
+            border-top: 3px solid #14b8a6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
 </head>
-<body class="min-h-screen">
-  <!-- Subtle Background Pattern -->
-  <div class="bg-pattern"></div>
 
-  <!-- Main Content -->
-  <div class="relative z-10 min-h-screen flex items-center justify-center p-6">
-    <div class="max-w-6xl mx-auto text-center fade-in">
-      
-      <!-- Header -->
-      <div class="mb-16">
-        <div class="glass inline-flex items-center gap-3 px-6 py-3 rounded-full mb-8 floating">
-          <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-          <span class="text-sm font-medium text-gray-200">Zero Idle Cost Serverless</span>
-        </div>
-        
-        <h1 class="text-6xl md:text-8xl font-bold mb-8 bg-gradient-to-r from-white via-gray-200 to-white bg-clip-text text-transparent leading-tight">
-          AI Assistant Studio
-        </h1>
-        
-        <p class="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto mb-8 leading-relaxed">
-          Build professional AI assistants with advanced voice cloning and video generation. 
-          Train custom models, deploy instantly, pay only for usage.
-        </p>
-      </div>
-
-      <!-- Quick Actions -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
-        <div class="glass glass-blue rounded-2xl p-8 floating">
-          <div class="w-20 h-20 bg-gradient-to-br from-blue-500/20 to-blue-600/20 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-blue-500/30">
-            <span class="text-3xl">🎙️</span>
-          </div>
-          <h3 class="text-xl font-semibold mb-4 text-white">Voice Cloning</h3>
-          <p class="text-gray-400 mb-8 leading-relaxed">Train Sesame CSM models with 30s of audio. Professional quality voice synthesis with LoRA fine-tuning.</p>
-          <button onclick="openStudio()" class="w-full bg-blue-600/80 hover:bg-blue-600 text-white py-3 px-6 rounded-xl font-medium transition border border-blue-500/50">
-            Start Training
-          </button>
-        </div>
-
-        <div class="glass glass-purple rounded-2xl p-8 floating" style="animation-delay: -1s;">
-          <div class="w-20 h-20 bg-gradient-to-br from-purple-500/20 to-purple-600/20 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-purple-500/30">
-            <span class="text-3xl">🎬</span>
-          </div>
-          <h3 class="text-xl font-semibold mb-4 text-white">Video Generation</h3>
-          <p class="text-gray-400 mb-8 leading-relaxed">Create consistent character videos with WAN 2.1 and custom LoRA training for professional presentations.</p>
-          <button onclick="openStudio()" class="w-full bg-purple-600/80 hover:bg-purple-600 text-white py-3 px-6 rounded-xl font-medium transition border border-purple-500/50">
-            Generate Videos
-          </button>
-        </div>
-
-        <div class="glass glass-green rounded-2xl p-8 floating" style="animation-delay: -2s;">
-          <div class="w-20 h-20 bg-gradient-to-br from-green-500/20 to-green-600/20 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-green-500/30">
-            <span class="text-3xl">🤖</span>
-          </div>
-          <h3 class="text-xl font-semibold mb-4 text-white">AI Assistant</h3>
-          <p class="text-gray-400 mb-8 leading-relaxed">Combine voice and video for complete AI assistant presentations that showcase your expertise.</p>
-          <button onclick="openStudio()" class="w-full bg-green-600/80 hover:bg-green-600 text-white py-3 px-6 rounded-xl font-medium transition border border-green-500/50">
-            Build Assistant
-          </button>
-        </div>
-      </div>
-
-      <!-- Deploy Section -->
-      <div class="glass rounded-3xl p-12 mb-20 border border-white/10">
-        <h2 class="text-4xl font-bold mb-12 text-white">🚀 One-Click Serverless Deployment</h2>
-        
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 max-w-5xl mx-auto">
-          <!-- Voice Model Deploy -->
-          <div class="glass glass-blue rounded-2xl p-8">
-            <div class="flex items-center justify-center mb-6">
-              <div class="w-16 h-16 bg-gradient-to-br from-blue-500/30 to-blue-600/30 rounded-2xl flex items-center justify-center border border-blue-500/50">
-                <span class="text-2xl">🎙️</span>
-              </div>
+<body class="font-normal antialiased bg-black text-gray-100">
+    <!-- Navigation -->
+    <header class="fixed top-0 left-0 right-0 z-50 backdrop-blur-md border-b bg-black/80 border-gray-900 slide-in-up animate-in">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <span class="text-xl font-semibold tracking-tight">🎤 Sesame CSM Dark</span>
+                </div>
+                
+                <div class="hidden md:flex items-center gap-8">
+                    <a href="#home" class="text-sm font-medium transition-colors text-gray-300 hover:text-teal-400">Generation</a>
+                    <a href="#about" class="text-sm font-medium transition-colors text-gray-300 hover:text-teal-400">About</a>
+                    <a href="#technical" class="text-sm font-medium transition-colors text-gray-300 hover:text-teal-400">Technical</a>
+                    <a href="#portfolio" class="text-sm font-medium transition-colors text-gray-300 hover:text-teal-400">Portfolio</a>
+                </div>
+                
+                <div class="flex items-center gap-4">
+                    <button onclick="showAbout()" class="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 hover:scale-105 bg-gray-100 text-black hover:bg-gray-200">
+                        CV Story
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 12h14"></path>
+                            <path d="m12 5 7 7-7 7"></path>
+                        </svg>
+                    </button>
+                </div>
             </div>
-            <h3 class="text-2xl font-semibold mb-6 text-blue-300">Voice Model (Sesame CSM)</h3>
-            <div class="text-left mb-8">
-              <div class="flex items-center gap-3 mb-3">
-                <div class="w-2 h-2 bg-blue-400 rounded-full"></div>
-                <span class="text-gray-300">Voice cloning with LoRA training</span>
-              </div>
-              <div class="flex items-center gap-3 mb-3">
-                <div class="w-2 h-2 bg-blue-400 rounded-full"></div>
-                <span class="text-gray-300">24kHz professional audio output</span>
-              </div>
-              <div class="flex items-center gap-3 mb-3">
-                <div class="w-2 h-2 bg-blue-400 rounded-full"></div>
-                <span class="text-gray-300">~$0.02 per generation</span>
-              </div>
-              <div class="flex items-center gap-3">
-                <div class="w-2 h-2 bg-green-400 rounded-full"></div>
-                <span class="text-green-300 font-semibold">$0.000 idle cost</span>
-              </div>
+        </nav>
+    </header>
+
+    <!-- Hero/Generation Section -->
+    <section id="home" class="relative overflow-hidden pt-24 pb-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+                <!-- Left: Generation Interface -->
+                <div class="space-y-8">
+                    <div>
+                        <h1 class="text-4xl sm:text-5xl lg:text-6xl leading-tight font-medium tracking-tight font-jakarta text-gray-100 slide-in-left animate-in">
+                            AI Voice & Video
+                            <span class="bg-clip-text font-medium text-transparent font-jakarta bg-gradient-to-r from-teal-400 to-blue-400 slide-in-left delay-200 animate-in">Generation</span>
+                        </h1>
+                        <p class="mt-6 text-lg max-w-xl text-gray-400 slide-in-left delay-300 animate-in">
+                            Event-grade AI portfolio showcasing collaborative engineering. Generate voice and video content with working demonstrations.
+                        </p>
+                    </div>
+                    
+                    <!-- Generation Interface -->
+                    <div class="space-y-6 slide-in-left delay-400 animate-in">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Content Input</label>
+                            <textarea 
+                                id="content-input" 
+                                class="w-full px-4 py-3 bg-gray-900 border border-gray-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-gray-100 resize-none"
+                                placeholder="Enter your voice or video prompt here..."
+                                rows="4"
+                                maxlength="500"
+                            ></textarea>
+                            <div class="flex justify-between items-center mt-2">
+                                <div class="char-counter text-sm text-gray-500">
+                                    <span id="char-count">0</span>/<span id="char-limit">500</span>
+                                </div>
+                                <div class="text-xs text-gray-500">Voice: 500 chars | Video: 200 chars</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Generation Type</label>
+                                <select id="generation-type" class="w-full px-4 py-3 bg-gray-900 border border-gray-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-gray-100">
+                                    <option value="voice">🎵 Voice Generation</option>
+                                    <option value="video">🎬 Video Generation</option>
+                                </select>
+                            </div>
+                            
+                            <div class="flex items-end">
+                                <button 
+                                    id="generate-btn" 
+                                    onclick="generateContent()" 
+                                    class="w-full inline-flex items-center justify-center gap-3 px-6 py-3 rounded-xl font-medium transition-all duration-200 hover:scale-105 text-black bg-teal-400 hover:bg-teal-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                                >
+                                    <span class="button-icon">⚡</span>
+                                    <span class="button-text">Generate</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- System Status -->
+                    <div class="flex items-center gap-6 slide-in-left delay-500 animate-in">
+                        <div class="flex items-center gap-3">
+                            <div class="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                            <span class="text-sm font-medium text-gray-300">System Status</span>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-100" id="system-status">🔄 Loading...</p>
+                            <p class="text-xs text-gray-500">Event-ready AI worker</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right: Output Display -->
+                <div class="relative scale-in delay-600 animate-in">
+                    <div class="relative rounded-2xl overflow-hidden bg-gray-950 border border-gray-800 min-h-[500px]">
+                        <div class="p-8">
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="text-xl font-semibold text-gray-100">Generated Content</h3>
+                                <button onclick="clearOutput()" class="text-gray-400 hover:text-gray-200 transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M3 6h18"></path>
+                                        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                                        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                            
+                            <div id="output-container" class="min-h-[300px] flex items-center justify-center">
+                                <div class="text-center">
+                                    <div class="text-4xl mb-4">🎭</div>
+                                    <div class="text-lg font-medium text-gray-300 mb-2">Ready for Generation</div>
+                                    <div class="text-sm text-gray-500">Select voice or video and click Generate to start</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <a href="https://runpod.io/console/serverless/deploy?image=davidhamilton/sesame-csm:latest&name=Voice-AI-Studio&containerDisk=20&env=VOICE_MODEL_REPO:BiggestLab/csm-1b&env=GENERATION_LIMIT:100&repo=https://github.com/drkv8r/sesame-csm-dark&ref=opvjdbzf" 
-               target="_blank" 
-               class="deploy-btn deploy-glow block w-full text-center transition">
-              🚀 Deploy Voice Model
-            </a>
-          </div>
+        </div>
+    </section>
 
-          <!-- Video Model Deploy -->
-          <div class="glass glass-purple rounded-2xl p-8">
-            <div class="flex items-center justify-center mb-6">
-              <div class="w-16 h-16 bg-gradient-to-br from-purple-500/30 to-purple-600/30 rounded-2xl flex items-center justify-center border border-purple-500/50">
-                <span class="text-2xl">🎬</span>
-              </div>
+    <!-- Technical Status Section -->
+    <section id="technical" class="py-12 bg-gray-950">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div class="text-center p-4 rounded-xl bg-black border border-gray-800 scale-in delay-100 animate-in">
+                    <div class="text-2xl mb-2">🔧</div>
+                    <div class="text-sm font-medium text-gray-300">Backend API</div>
+                    <div class="text-xs text-gray-500" id="backend-status">Checking...</div>
+                </div>
+                
+                <div class="text-center p-4 rounded-xl bg-black border border-gray-800 scale-in delay-200 animate-in">
+                    <div class="text-2xl mb-2">🎵</div>
+                    <div class="text-sm font-medium text-gray-300">Voice Engine</div>
+                    <div class="text-xs text-green-400">Enhanced Ready</div>
+                </div>
+                
+                <div class="text-center p-4 rounded-xl bg-black border border-gray-800 scale-in delay-300 animate-in">
+                    <div class="text-2xl mb-2">🎬</div>
+                    <div class="text-sm font-medium text-gray-300">Video Engine</div>
+                    <div class="text-xs text-green-400">MP4 Ready</div>
+                </div>
+                
+                <div class="text-center p-4 rounded-xl bg-black border border-gray-800 scale-in delay-400 animate-in">
+                    <div class="text-2xl mb-2">🤖</div>
+                    <div class="text-sm font-medium text-gray-300">MCP Support</div>
+                    <div class="text-xs text-gray-500" id="mcp-status">Checking...</div>
+                </div>
             </div>
-            <h3 class="text-2xl font-semibold mb-6 text-purple-300">Video Model (WAN 2.1)</h3>
-            <div class="text-left mb-8">
-              <div class="flex items-center gap-3 mb-3">
-                <div class="w-2 h-2 bg-purple-400 rounded-full"></div>
-                <span class="text-gray-300">Character-consistent video generation</span>
-              </div>
-              <div class="flex items-center gap-3 mb-3">
-                <div class="w-2 h-2 bg-purple-400 rounded-full"></div>
-                <span class="text-gray-300">LoRA training for custom characters</span>
-              </div>
-              <div class="flex items-center gap-3 mb-3">
-                <div class="w-2 h-2 bg-purple-400 rounded-full"></div>
-                <span class="text-gray-300">~$0.10 per 4-second video</span>
-              </div>
-              <div class="flex items-center gap-3">
-                <div class="w-2 h-2 bg-green-400 rounded-full"></div>
-                <span class="text-green-300 font-semibold">$0.000 idle cost</span>
-              </div>
+        </div>
+    </section>
+
+    <!-- Portfolio Story Section -->
+    <section id="portfolio" class="py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <p class="text-sm font-medium uppercase tracking-wider text-teal-400 slide-in-up animate-in">Collaborative AI Engineering</p>
+                <h2 class="mt-4 text-3xl lg:text-4xl tracking-tight font-jakarta font-medium text-gray-100 slide-in-up delay-200 animate-in">
+                    Built Through Human-AI Partnership
+                </h2>
+                <p class="mt-6 text-lg text-gray-400 slide-in-up delay-300 animate-in">
+                    This project demonstrates modern collaborative development—David Hamilton × Perplexity AI engineering a production-ready AI portfolio.
+                </p>
             </div>
-            <a href="https://runpod.io/console/serverless/deploy?image=davidhamilton/unified-ai:latest&name=Video-AI-Studio&containerDisk=25&env=VIDEO_MODEL_PATH:Wan-AI/Wan2.1-T2V-1.3B&env=GENERATION_LIMIT:50&repo=https://github.com/drkv8r/sesame-csm-dark&ref=opvjdbzf" 
-               target="_blank" 
-               class="deploy-btn block w-full text-center transition"
-               style="border-color: rgba(139, 92, 246, 0.3); animation: pulse-border 3s ease-in-out infinite; animation-delay: 1s;">
-              🚀 Deploy Video Model
-            </a>
-          </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="p-8 rounded-xl border bg-black border-gray-800 scale-in delay-400 animate-in">
+                    <div class="w-12 h-12 rounded-lg flex items-center justify-center mb-6 bg-teal-900">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 text-teal-400">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                            <path d="M2 17l10 5 10-5"></path>
+                            <path d="M2 12l10 5 10-5"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3 text-gray-100">Modern Architecture</h3>
+                    <p class="mb-4 text-gray-400">Flask API backend with enhanced HTML5/CSS3 frontend, showcasing full-stack development expertise.</p>
+                </div>
+                
+                <div class="p-8 rounded-xl border bg-black border-gray-800 scale-in delay-500 animate-in">
+                    <div class="w-12 h-12 rounded-lg flex items-center justify-center mb-6 bg-purple-900">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 text-purple-400">
+                            <path d="M9 12l2 2 4-4"></path>
+                            <path d="M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9c1.53 0 2.96.38 4.22 1.05"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3 text-gray-100">Problem Solving</h3>
+                    <p class="mb-4 text-gray-400">Resolved complex CSM model integration challenges, demonstrating debugging and iterative development skills.</p>
+                </div>
+                
+                <div class="p-8 rounded-xl border bg-black border-gray-800 scale-in delay-600 animate-in">
+                    <div class="w-12 h-12 rounded-lg flex items-center justify-center mb-6 bg-green-900">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 text-green-400">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3 text-gray-100">Event Ready</h3>
+                    <p class="mb-4 text-gray-400">Production-quality code suitable for technical interviews, portfolio presentations, and collaborative showcases.</p>
+                </div>
+            </div>
         </div>
+    </section>
 
-        <div class="mt-12 glass glass-green rounded-xl p-6 max-w-3xl mx-auto">
-          <p class="text-green-300">
-            <strong class="text-green-200">💡 Pro Tip:</strong> Deploy both models for complete AI assistant capabilities. 
-            Total setup time: ~5 minutes. No ongoing costs when idle.
-          </p>
+    <!-- Footer -->
+    <footer class="py-12 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <div class="flex justify-center items-center gap-8 mb-6">
+                    <a href="https://github.com/drkv8r/sesame-csm-dark" target="_blank" class="flex items-center gap-2 text-gray-400 hover:text-teal-400 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path>
+                            <path d="M9 18c-4.51 2-5-2-7-2"></path>
+                        </svg>
+                        GitHub Repository
+                    </a>
+                    <button onclick="showTechnicalDetails()" class="flex items-center gap-2 text-gray-400 hover:text-teal-400 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="16 18 22 12 16 6"></polyline>
+                            <polyline points="8 6 2 12 8 18"></polyline>
+                        </svg>
+                        Technical Details
+                    </button>
+                </div>
+                <div class="space-y-2 text-sm text-gray-500">
+                    <p>Event-Grade AI Portfolio • Built with Collaborative Engineering</p>
+                    <p>David Hamilton × Perplexity AI • 2025</p>
+                </div>
+            </div>
         </div>
-      </div>
+    </footer>
 
-      <!-- Stats -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-20">
-        <div class="glass glass-green rounded-2xl p-8 text-center">
-          <div class="text-4xl font-bold text-green-400 mb-3">$0.000</div>
-          <div class="text-sm text-gray-400 uppercase tracking-wide">Idle Cost/Hour</div>
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50" style="display: none;">
+        <div class="text-center">
+            <div class="loading-spinner mx-auto mb-4"></div>
+            <div class="text-lg font-medium text-gray-100">Generating content...</div>
+            <div class="text-sm text-gray-400 mt-2">This may take a few moments</div>
         </div>
-        <div class="glass glass-blue rounded-2xl p-8 text-center">
-          <div class="text-4xl font-bold text-blue-400 mb-3">2-5s</div>
-          <div class="text-sm text-gray-400 uppercase tracking-wide">Generation Time</div>
-        </div>
-        <div class="glass glass-purple rounded-2xl p-8 text-center">
-          <div class="text-4xl font-bold text-purple-400 mb-3">24kHz</div>
-          <div class="text-sm text-gray-400 uppercase tracking-wide">Audio Quality</div>
-        </div>
-        <div class="glass glass-red rounded-2xl p-8 text-center">
-          <div class="text-4xl font-bold text-red-400 mb-3">512p</div>
-          <div class="text-sm text-gray-400 uppercase tracking-wide">Video Resolution</div>
-        </div>
-      </div>
-
-      <!-- Final CTA -->
-      <div class="glass rounded-3xl p-12 border border-white/10">
-        <h2 class="text-3xl font-bold mb-6 text-white">Ready to Build Your AI Assistant?</h2>
-        <p class="text-xl text-gray-300 mb-10 max-w-3xl mx-auto leading-relaxed">
-          Join the future of AI-powered presentations. Create professional voice and video content 
-          that showcases your technical expertise to hiring managers.
-        </p>
-        <div class="flex flex-col sm:flex-row gap-6 justify-center items-center">
-          <button onclick="openStudio()" class="btn bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-4 px-10 rounded-xl text-lg font-semibold shadow-lg">
-            Open Studio
-          </button>
-          <a href="https://github.com/drkv8r/sesame-csm-dark" target="_blank" class="btn glass border border-gray-600 hover:border-gray-400 text-gray-300 hover:text-white py-4 px-10 rounded-xl text-lg font-semibold">
-            View Source
-          </a>
-        </div>
-      </div>
-
-      <!-- Footer -->
-      <div class="mt-20 text-center">
-        <div class="glass rounded-2xl p-8 inline-block">
-          <p class="text-gray-400">
-            Created by <strong class="text-white">David Hamilton 2025</strong> • 
-            Powered by <span class="text-blue-400">RunPod Serverless</span>
-          </p>
-        </div>
-      </div>
     </div>
-  </div>
 
-  <script>
-    function openStudio() {
-      window.location.href = 'voice-studio.html';
-    }
+    <script>
+        // Global variables
+        const API_BASE_URL = 'http://localhost:8000';
+        let isGenerating = false;
 
-    // Add smooth entrance animations
-    document.addEventListener('DOMContentLoaded', function() {
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-          }
+        // DOM Elements
+        const contentInput = document.getElementById('content-input');
+        const charCount = document.getElementById('char-count');
+        const charLimit = document.getElementById('char-limit');
+        const generationType = document.getElementById('generation-type');
+        const generateBtn = document.getElementById('generate-btn');
+        const outputContainer = document.getElementById('output-container');
+        const loadingOverlay = document.getElementById('loading-overlay');
+
+        // Initialize application
+        document.addEventListener('DOMContentLoaded', function() {
+            setupEventListeners();
+            checkSystemStatus();
+            updateCharacterCounter();
+            
+            // Add animation trigger
+            setTimeout(() => {
+                document.querySelectorAll('.slide-in-left, .slide-in-right, .slide-in-up, .scale-in, .fade-in').forEach(el => {
+                    el.classList.add('animate-in');
+                });
+            }, 100);
         });
-      }, { threshold: 0.1 });
 
-      // Observe all glass elements for entrance animations
-      document.querySelectorAll('.glass').forEach(el => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(20px)';
-        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        observer.observe(el);
-      });
+        function setupEventListeners() {
+            // Character counter
+            contentInput.addEventListener('input', updateCharacterCounter);
+            
+            // Generation type change
+            generationType.addEventListener('change', updateCharacterLimit);
+            
+            // Enter key support
+            contentInput.addEventListener('keydown', function(e) {
+                if (e.ctrlKey && e.key === 'Enter') {
+                    generateContent();
+                }
+            });
+        }
 
-      // Add subtle mouse tracking for glass cards
-      document.addEventListener('mousemove', (e) => {
-        const cards = document.querySelectorAll('.glass');
-        const x = e.clientX / window.innerWidth;
-        const y = e.clientY / window.innerHeight;
-        
-        cards.forEach((card, index) => {
-          const rect = card.getBoundingClientRect();
-          const cardX = (rect.left + rect.width / 2) / window.innerWidth;
-          const cardY = (rect.top + rect.height / 2) / window.innerHeight;
-          
-          const distance = Math.sqrt((x - cardX) ** 2 + (y - cardY) ** 2);
-          const intensity = Math.max(0, 1 - distance * 2);
-          
-          if (intensity > 0 && card.matches(':hover')) {
-            card.style.transform = `translateY(-2px) scale(${1 + intensity * 0.02})`;
-          }
-        });
-      });
-    });
+        function updateCharacterCounter() {
+            const count = contentInput.value.length;
+            const limit = generationType.value === 'voice' ? 500 : 200;
+            
+            charCount.textContent = count;
+            charLimit.textContent = limit;
+            
+            // Visual feedback for approaching limit
+            const percentage = count / limit;
+            if (percentage > 0.9) {
+                charCount.className = 'text-red-400';
+            } else if (percentage > 0.75) {
+                charCount.className = 'text-yellow-400';
+            } else {
+                charCount.className = 'text-gray-500';
+            }
+        }
 
-    // Analytics tracking
-    function trackDeploy(model) {
-      if (typeof gtag !== 'undefined') {
-        gtag('event', 'deploy_click', {
-          'event_category': 'deployment',
-          'event_label': model
-        });
-      }
-    }
-  </script>
+        function updateCharacterLimit() {
+            const type = generationType.value;
+            const limit = type === 'voice' ? 500 : 200;
+            contentInput.maxLength = limit;
+            
+            // Trim content if it exceeds new limit
+            if (contentInput.value.length > limit) {
+                contentInput.value = contentInput.value.substring(0, limit);
+            }
+            
+            updateCharacterCounter();
+        }
+
+        async function generateContent() {
+            if (isGenerating) return;
+            
+            const content = contentInput.value.trim();
+            const type = generationType.value;
+            
+            // Validation
+            if (!content) {
+                showNotification('Please enter some content first!', 'warning');
+                return;
+            }
+            
+            const maxLength = type === 'voice' ? 500 : 200;
+            if (content.length > maxLength) {
+                showNotification(`Content too long! Maximum ${maxLength} characters for ${type}.`, 'error');
+                return;
+            }
+            
+            // Start generation
+            isGenerating = true;
+            showLoadingState();
+            
+            try {
+                const endpoint = `/generate_${type}`;
+                const payload = type === 'voice' ? { text: content } : { prompt: content };
+                
+                console.log(`🚀 Generating ${type} for:`, content.substring(0, 50));
+                
+                const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = URL.createObjectURL(blob);
+                    const timestamp = Date.now();
+                    
+                    showGeneratedContent(type, url, content, timestamp);
+                    showNotification(`${type} generation completed successfully!`, 'success');
+                } else {
+                    const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+                    throw new Error(errorData.error || `${type} generation failed`);
+                }
+                
+            } catch (error) {
+                console.error(`Generation error:`, error);
+                showError(error.message);
+                showNotification(`${type} generation failed: ${error.message}`, 'error');
+            } finally {
+                isGenerating = false;
+                hideLoadingState();
+            }
+        }
+
+        function showGeneratedContent(type, url, originalContent, timestamp) {
+            const mediaElement = type === 'voice' 
+                ? `<audio controls class="w-full rounded-lg mb-4" preload="metadata">
+                     <source src="${url}" type="audio/wav">
+                     Your browser does not support audio playback.
+                   </audio>`
+                : `<video controls class="w-full rounded-lg mb-4" preload="metadata">
+                     <source src="${url}" type="video/mp4">
+                     Your browser does not support video playback.
+                   </video>`;
+            
+            const contentPreview = originalContent.length > 100 
+                ? originalContent.substring(0, 97) + '...' 
+                : originalContent;
+            
+            outputContainer.innerHTML = `
+                <div class="space-y-6">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <span class="text-2xl">${type === 'voice' ? '🎵' : '🎬'}</span>
+                            <div>
+                                <div class="font-semibold text-gray-100">${type.charAt(0).toUpperCase() + type.slice(1)} Generated</div>
+                                <div class="text-sm text-gray-400">${new Date(timestamp).toLocaleTimeString()}</div>
+                            </div>
+                        </div>
+                        <div class="text-sm text-green-400">✅ Success</div>
+                    </div>
+                    
+                    <div class="bg-gray-800 rounded-lg p-4">
+                        <div class="text-sm text-gray-300 mb-2">Original ${type === 'voice' ? 'Text' : 'Prompt'}:</div>
+                        <div class="text-sm text-gray-400 font-mono">"${contentPreview}"</div>
+                    </div>
+                    
+                    ${mediaElement}
+                    
+                    <div class="flex gap-3">
+                        <a href="${url}" 
+                           download="${type}_${timestamp}.${type === 'voice' ? 'wav' : 'mp4'}"
+                           class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                            Download
+                        </a>
+                        
+                        <button onclick="shareContent('${url}', '${type}')" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+                                <polyline points="16 6 12 2 8 6"></polyline>
+                                <line x1="12" y1="2" x2="12" y2="15"></line>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showError(message) {
+            outputContainer.innerHTML = `
+                <div class="text-center py-12">
+                    <div class="text-4xl mb-4">❌</div>
+                    <div class="text-xl font-semibold text-red-400 mb-2">Generation Failed</div>
+                    <div class="text-gray-400 mb-6">${message}</div>
+                    <button onclick="checkSystemStatus()" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 2v6h6"></path>
+                            <path d="M21 12A9 9 0 0 0 6 5.3L3 8"></path>
+                            <path d="M21 22v-6h-6"></path>
+                            <path d="M3 12a9 9 0 0 0 15 6.7l3-2.7"></path>
+                        </svg>
+                        Check Status
+                    </button>
+                </div>
+            `;
+        }
+
+        function clearOutput() {
+            outputContainer.innerHTML = `
+                <div class="text-center">
+                    <div class="text-4xl mb-4">🎭</div>
+                    <div class="text-lg font-medium text-gray-300 mb-2">Ready for Generation</div>
+                    <div class="text-sm text-gray-500">Select voice or video and click Generate to start</div>
+                </div>
+            `;
+        }
+
+        function showLoadingState() {
+            loadingOverlay.style.display = 'flex';
+            generateBtn.disabled = true;
+            generateBtn.innerHTML = `
+                <div class="w-5 h-5 border-2 border-gray-400 border-t-black rounded-full animate-spin"></div>
+                <span>Generating...</span>
+            `;
+        }
+
+        function hideLoadingState() {
+            loadingOverlay.style.display = 'none';
+            generateBtn.disabled = false;
+            generateBtn.innerHTML = `
+                <span class="button-icon">⚡</span>
+                <span class="button-text">Generate</span>
+            `;
+        }
+
+        async function checkSystemStatus() {
+            try {
+                // Check backend status
+                const backendResponse = await fetch(`${API_BASE_URL}/`);
+                const backendData = await backendResponse.json();
+                
+                document.getElementById('system-status').textContent = 
+                    backendData.status === '✅ FULLY OPERATIONAL' ? '✅ Online' : '❌ Offline';
+                document.getElementById('backend-status').textContent = 
+                    backendResponse.ok ? '✅ Connected' : '❌ Disconnected';
+                
+                // Check MCP status
+                const mcpResponse = await fetch(`${API_BASE_URL}/mcp/status`);
+                const mcpData = await mcpResponse.json();
+                document.getElementById('mcp-status').textContent = 
+                    mcpData.mcp_enabled ? '✅ Ready' : '❌ Disabled';
+                
+            } catch (error) {
+                console.error('Status check failed:', error);
+                document.getElementById('system-status').textContent = '❌ Offline';
+                document.getElementById('backend-status').textContent = '❌ Error';
+                document.getElementById('mcp-status').textContent = '❌ Unknown';
+            }
+        }
+
+        async function showAbout() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/about`);
+                const data = await response.json();
+                
+                // Create comprehensive about modal content
+                const aboutContent = `Sesame CSM Dark - AI Portfolio Project
+
+👨‍💻 DEVELOPER
+${data.cv_story.name}
+GitHub: ${data.cv_story.github}
+
+🎯 PROFESSIONAL FOCUS
+${data.cv_story.professional_focus.map(skill => `• ${skill}`).join('\n')}
+
+🤖 COLLABORATION STORY
+Partner: ${data.collaboration_story.partner}
+Methodology: ${data.collaboration_story.methodology}
+
+🏆 KEY ACHIEVEMENTS
+${data.collaboration_story.key_achievements.map(achievement => `• ${achievement}`).join('\n')}
+
+🎪 EVENT READINESS
+${data.event_readiness.presentation_features.map(feature => `• ${feature}`).join('\n')}
+
+This project demonstrates modern AI engineering through collaborative development between human expertise and AI assistance.`;
+                
+                alert(aboutContent);
+                
+            } catch (error) {
+                alert(`About information temporarily unavailable.\n\nProject: Sesame CSM Dark\nBuilt by: David Hamilton × Perplexity AI\nStatus: Event-ready AI portfolio demonstration\n\nPlease ensure the backend is running on localhost:8000`);
+            }
+        }
+
+        async function showTechnicalDetails() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/system/info`);
+                const data = await response.json();
+                
+                const techDetails = `TECHNICAL SYSTEM INFORMATION
+
+🖥️ SYSTEM
+Python: ${data.system.python_version.split(' ')[0]}
+Environment: ${data.system.environment}
+Working Directory: ${data.system.working_directory}
+
+⚙️ APPLICATION
+Name: ${data.application.name}
+Status: ${data.application.status}
+Active Endpoints: ${data.application.endpoints_active}
+CORS: ${data.application.cors_enabled ? 'Enabled' : 'Disabled'}
+Logging: ${data.application.logging_level}
+
+🌐 FRONTEND
+Framework: Modern HTML5/CSS3/JavaScript + Tailwind CSS
+Features: Responsive design, real-time status, animations
+Backend Integration: RESTful API
+
+This demonstrates professional full-stack development with modern web technologies.`;
+                
+                alert(techDetails);
+                
+            } catch (error) {
+                alert('Technical details temporarily unavailable.\n\nArchitecture: Flask API + Modern SPA + Tailwind CSS\nDeployment: GitHub Codespaces\nFeatures: Voice/Video generation, MCP integration\n\nFull technical documentation available in source code.');
+            }
+        }
+
+        function shareContent(url, type) {
+            navigator.clipboard.writeText(url).then(() => {
+                showNotification(`${type} link copied to clipboard!`, 'success');
+            }).catch(() => {
+                showNotification('Could not copy link to clipboard', 'error');
+            });
+        }
+
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 z-50 px-4 py-3 rounded-lg font-medium text-white transform transition-all duration-300 translate-x-full`;
+            
+            // Set background color based on type
+            const colors = {
+                success: 'bg-green-600',
+                error: 'bg-red-600',
+                warning: 'bg-yellow-600',
+                info: 'bg-blue-600'
+            };
+            notification.classList.add(colors[type] || colors.info);
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => notification.classList.remove('translate-x-full'), 100);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.classList.add('translate-x-full');
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+    </script>
 </body>
 </html>
