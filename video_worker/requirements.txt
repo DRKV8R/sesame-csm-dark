@@ -3,7 +3,6 @@ runpod>=1.7.6
 
 # PyTorch ecosystem
 torch>=2.2.0,<2.5.0
-torchvision>=0.17.0
 transformers>=4.36.0
 accelerate>=0.28.0
 
@@ -11,25 +10,10 @@ accelerate>=0.28.0
 diffusers>=0.27.2
 opencv-python>=4.8.0
 pillow>=10.3.0
-imageio>=2.31.0
-imageio-ffmpeg>=0.4.9
 
 # Training frameworks
 peft>=0.10.0
 bitsandbytes>=0.41.0
-datasets>=2.16.0
-
-# Scientific computing
-numpy>=1.24.0,<2.0.0
-scipy>=1.10.0
 
 # Utilities
-requests>=2.31.0
-tqdm>=4.65.0
-typing-extensions>=4.8.0
-packaging>=23.0
-
-# Hugging Face
-huggingface_hub>=0.20.0
-safetensors>=0.4.0
-
+numpy>=1.24.0,<2.0.0
