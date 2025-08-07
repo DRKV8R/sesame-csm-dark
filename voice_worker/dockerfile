@@ -31,17 +31,19 @@ ENV HF_HOME=/workspace/hf_cache
 ENV CUDA_LAUNCH_BLOCKING=0
 ENV TORCH_CUDNN_V8_API_ENABLED=1
 
-# ---- Python dependencies ----
+# ---- Clone CSM Repo First ----
+RUN git clone https://github.com/SesameAILabs/csm.git csm_repo
+
+# ---- Install ALL Python dependencies at once ----
 COPY requirements.txt .
+# This single RUN command installs from your requirements.txt AND the cloned repo,
+# allowing pip to resolve all dependencies together.
 RUN pip install --no-cache-dir --upgrade pip setuptools wheel && \
-    pip install --no-cache-dir -r requirements.txt && \
+    pip install --no-cache-dir -r requirements.txt -e ./csm_repo && \
     rm -rf ~/.cache/pip
 
-# ---- CSM repo ----
-RUN git clone https://github.com/SesameAILabs/csm.git csm_repo && \
-    cd csm_repo && \
-    pip install --no-cache-dir -e . && \
-    python -c "from generator import load_csm_1b; print('CSM import successful')"
+# ---- Verification Step ----
+RUN python -c "from generator import load_csm_1b; print('CSM import successful')"
 
 # ---- Application files ----
 COPY handler.py ./handler.py
@@ -51,6 +53,7 @@ RUN mkdir -p /workspace/voice_loras /workspace/hf_cache /workspace/temp && \
     chmod -R 755 /workspace
 
 # ---- Non-root user ----
+# The chown command is correctly placed AFTER all files are created as root.
 RUN useradd -m -u 1000 -s /bin/bash runpod && \
     chown -R runpod:runpod /app /workspace
 
@@ -63,6 +66,7 @@ RUN python -c "import torch; import torchaudio; import librosa; print('Voice imp
 HEALTHCHECK --interval=30s --timeout=15s --start-period=120s --retries=3 \
     CMD python -c "import requests; requests.get('http://localhost:8000/health', timeout=10)"
 
+# ---- Metadata Labels ----
 LABEL maintainer="David Hamilton 2025"
 LABEL description="Sesame CSM Voice Training and Generation Worker"
 LABEL version="1.0.0"
