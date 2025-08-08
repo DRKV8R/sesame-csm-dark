@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mai Assistant - Control Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --glass-bg: rgba(0, 0, 0, 0.6);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --accent-blue: #3b82f6;
+      --accent-purple: #8b5cf6;
+      --accent-green: #10b981;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #000000;
+      color: #ffffff;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    .glass {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 2rem;
+      transition: all 0.3s ease;
+    }
+
+    .glass:hover {
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-1px);
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 0.875rem;
+    }
+
+    .btn-primary {
+      background: var(--glass-bg);
+      border: 1px solid var(--accent-blue);
+      color: #60a5fa;
+    }
+
+    .btn-primary:hover {
+      background: rgba(59, 130, 246, 0.1);
+      border-color: #60a5fa;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 4rem 2rem;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .header h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #ffffff, #9ca3af);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .header p {
+      color: #9ca3af;
+      font-size: 1.125rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .status-card {
+      text-align: center;
+    }
+
+    .status-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: #ffffff;
+    }
+
+    .status-text {
+      color: #9ca3af;
+      margin-bottom: 2rem;
+      font-size: 0.875rem;
+    }
+
+    .quick-start {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .quick-start h3 {
+      color: #ffffff;
+      margin-bottom: 1rem;
+    }
+
+    .quick-start ol {
+      margin-left: 1.5rem;
+      color: #9ca3af;
+    }
+
+    .quick-start li {
+      margin-bottom: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Mai Assistant Control Center</h1>
+      <p>Train video models and deploy your AI assistant with zero idle costs</p>
+    </div>
+
+    <div class="grid">
+      
+      <div class="glass status-card">
+        <h3 class="status-title">Video LoRA Training</h3>
+        <p class="status-text">Train character-consistent video generation with your images</p>
+        <a href="https://runpod.io/console/serverless/deploy?image=icloudv8dr/video_worker:latest&name=Mai-Video-Trainer&env=ACTION:train_video_lora_real" 
+           class="btn btn-primary" target="_blank">
+          Deploy Trainer
+        </a>
+      </div>
+
+      <div class="glass status-card">
+        <h3 class="status-title">Video Generation</h3>
+        <p class="status-text">Generate videos using trained LoRA adapters</p>
+        <a href="https://runpod.io/console/serverless/deploy?image=icloudv8dr/video_worker:latest&name=Mai-Video-Gen&env=ACTION:generate_video" 
+           class="btn btn-primary" target="_blank">
+          Deploy Generator
+        </a>
+      </div>
+
+      <div class="glass status-card">
+        <h3 class="status-title">Full Assistant</h3>
+        <p class="status-text">Combined voice and video deployment pipeline</p>
+        <a href="https://runpod.io/console/serverless/deploy?image=icloudv8dr/video_worker:latest&name=Mai-Full-Assistant" 
+           class="btn btn-primary" target="_blank">
+          Deploy Assistant
+        </a>
+      </div>
+
+    </div>
+
+    <div class="glass quick-start">
+      <h3>Quick Start Guide</h3>
+      <ol>
+        <li>Deploy Video Trainer → Upload 5-30 character images with captions</li>
+        <li>Wait for LoRA training completion (~2-5 minutes)</li>
+        <li>Deploy Generator → Use trained LoRA for video creation</li>
+        <li>Deploy Full Assistant → Production-ready pipeline</li>
+      </ol>
+    </div>
+  </div>
+</body>
+</html>
