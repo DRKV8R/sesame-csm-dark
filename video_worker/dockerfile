@@ -1,30 +1,42 @@
-# Dockerfile for Video Generation Service (wan-2.1)
+# --- FINAL Dockerfile for Voice Generation Service (sesame-csm) ---
+
 FROM runpod/pytorch:2.2.1-py3.10-cuda12.1.1-devel-ubuntu22.04
 WORKDIR /app
 
 # ---- 1. Install System Dependencies ----
 RUN apt-get update && apt-get install -y \
-    ffmpeg libsm6 libxext6 git \
+    ffmpeg sox libsox-fmt-all git \
     && rm -rf /var/lib/apt/lists/* && apt-get clean
 
 # ---- 2. Set Environment Variables ----
-ENV VIDEO_MODEL_PATH=Wan-AI/Wan2.1-T2V-1.3B
+ENV NO_TORCH_COMPILE=1
+# CORRECTED LINE: Define the python path without appending a non-existent variable.
+ENV PYTHONPATH=/app:/app/csm_repo
+ENV VOICE_MODEL_REPO=sesame/csm-1b
 ENV FFMPEG_BINARY=/usr/bin/ffmpeg
+ENV TORCHAUDIO_BACKEND=ffmpeg
 ENV HF_HOME=/workspace/hf_cache
 
-# ---- 3. Install Python Dependencies ----
+# ---- 3. Clone CSM Repo First ----
+RUN git clone https://github.com/SesameAILabs/csm.git csm_repo
+
+# ---- 4. Install ALL Python Dependencies at Once ----
 COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+    pip install --no-cache-dir -r requirements.txt -e ./csm_repo && \
+    rm -rf ~/.cache/pip
 
-# ---- 4. Copy Application Code ----
+# ---- 5. Verification Step ----
+RUN python -c "from generator import load_csm_1b; print('CSM import successful')"
+
+# ---- 6. Copy Application Code ----
 COPY handler.py ./handler.py
 
-# ---- 5. Create Workspace and Set User ----
-RUN mkdir -p /workspace/video_loras /workspace/hf_cache && \
+# ---- 7. Create Workspace and Set User ----
+RUN mkdir -p /workspace/voice_loras /workspace/hf_cache && \
     useradd -m -u 1000 -s /bin/bash runpod && \
     chown -R runpod:runpod /app /workspace
 USER runpod
 
-# ---- 6. Run the Application Handler ----
+# ---- 8. Run the Application Handler ----
 CMD ["python", "-u", "handler.py"]
