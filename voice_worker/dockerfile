@@ -1,11 +1,12 @@
-# --- FINAL Dockerfile with Hugging Face Token Support ---
+# --- ULTIMATE DEBUGGING Dockerfile for Voice Generation Service ---
+# This version separates pip installs with verbose logging to find the exact conflict.
 
 FROM runpod/pytorch:2.2.1-py3.10-cuda12.1.1-devel-ubuntu22.04
 WORKDIR /app
 
 # ---- 1. Install System Dependencies ----
 RUN apt-get update && apt-get install -y \
-    ffmpeg sox libsox-fmt-all git build-essential \
+    ffmpeg sox libsox-fmt-all git \
     && rm -rf /var/lib/apt/lists/* && apt-get clean
 
 # ---- 2. Set Environment Variables ----
@@ -15,32 +16,29 @@ ENV VOICE_MODEL_REPO=sesame/csm-1b
 ENV FFMPEG_BINARY=/usr/bin/ffmpeg
 ENV TORCHAUDIO_BACKEND=ffmpeg
 ENV HF_HOME=/workspace/hf_cache
-ENV CMAKE_CUDA_ARCHITECTURES=all
 
-# ---- 3. Install ALL Python Dependencies using HF Token ----
+# ---- 3. Install Dependencies Separately for MAXIMUM Debug Output ----
 COPY requirements.txt .
-# The --mount directive securely provides the HF_TOKEN secret to this RUN command.
-# The secret is never saved in the image layers.
-RUN --mount=type=secret,id=huggingface_token \
-    pip install --no-cache-dir --upgrade pip && \
-    # Login to Hugging Face using the token from the secret file.
-    huggingface-cli login --token $(cat /run/secrets/huggingface_token) && \
-    # Now, install all packages. This session is authenticated.
-    pip install --no-cache-dir -r requirements.txt \
-    "csm @ git+https://github.com/SesameAILabs/csm.git" && \
-    rm -rf ~/.cache/pip
+RUN pip install --no-cache-dir --upgrade pip
 
-# ---- 4. Verification Step ----
-RUN python -c "from generator import load_csm_1b; from faster_whisper import WhisperModel; print('CSM and Whisper imports successful')"
+# --- DEBUG STEP 1 ---
+# Install your requirements FIRST with verbose logging.
+RUN echo "--- Starting install of requirements.txt ---" && \
+    pip install --no-cache-dir -v -r requirements.txt && \
+    echo "--- Finished install of requirements.txt ---"
 
-# ---- 5. Copy Application Code ----
+# --- DEBUG STEP 2 ---
+# NOW, try to install the CSM repo directly from GitHub.
+# This is the step we expect to FAIL. The verbose log will tell us why.
+RUN echo "--- Starting install of csm from GitHub ---" && \
+    pip install --no-cache-dir -v "csm @ git+https://github.com/SesameAILabs/csm.git" && \
+    echo "--- Finished install of csm from GitHub ---"
+
+# ---- 4. The rest of the file (will not be reached if the build fails as expected) ----
+RUN python -c "from generator import load_csm_1b; print('CSM import successful')"
 COPY handler.py ./handler.py
-
-# ---- 6. Create Workspace and Set User ----
 RUN mkdir -p /workspace/voice_loras /workspace/hf_cache && \
     useradd -m -u 1000 -s /bin/bash runpod && \
     chown -R runpod:runpod /app /workspace
 USER runpod
-
-# ---- 7. Run the Application Handler ----
 CMD ["python", "-u", "handler.py"]
