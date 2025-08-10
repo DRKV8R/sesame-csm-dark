@@ -1,4 +1,5 @@
-# --- FINAL Dockerfile for Voice Generation Service (sesame-csm) ---
+# --- SUPER DEBUG Dockerfile for Voice Generation Service ---
+# This version uses maximum verbosity to find the exact dependency conflict.
 
 FROM runpod/pytorch:2.2.1-py3.10-cuda12.1.1-devel-ubuntu22.04
 WORKDIR /app
@@ -19,36 +20,22 @@ ENV HF_HOME=/workspace/hf_cache
 # ---- 3. Clone CSM Repo First ----
 RUN git clone https://github.com/SesameAILabs/csm.git csm_repo
 
-# ---- 4. Install ALL Python Dependencies at Once ----
+# ---- 4. Install Dependencies Separately for MAXIMUM Debug Output ----
 COPY requirements.txt .
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt -e ./csm_repo && \
-    rm -rf ~/.cache/pip
+RUN pip install --no-cache-dir --upgrade pip
 
-# ---- 5. Verification Step ----
-RUN python -c "from generator import load_csm_1b; print('CSM import successful')"
+# --- DEBUG STEP 1: Install from your requirements.txt first. ---
+RUN echo "--- Installing packages from requirements.txt with verbose logging ---" && \
+    pip install --no-cache-dir -vvv -r requirements.txt && \
+    echo "--- Successfully installed packages from requirements.txt ---"
 
-# ---- 6. Copy Application Code ----
-COPY handler.py ./handler.py
+# --- DEBUG STEP 2: Install the CSM repo. ---
+# This is the step we expect to FAIL. The verbose log will tell us exactly which package is causing the conflict.
+RUN echo "--- Installing csm_repo with verbose logging ---" && \
+    pip install --no-cache-dir -vvv -e ./csm_repo && \
+    echo "--- Successfully installed csm_repo ---"
 
-# ---- 7. Create Workspace and Set User ----
-RUN mkdir -p /workspace/voice_loras /workspace/hf_cache && \
-    useradd -m -u 1000 -s /bin/bash runpod && \
-    chown -R runpod:runpod /app /workspace
-USER runpod
-
-# ---- 8. Run the Application Handler ----
-CMD ["python", "-u", "handler.py"]
-
-# --- DEBUG STEP 2 ---
-# NOW, try to install the CSM repo.
-# This is the step we expect to FAIL. The verbose log will tell us why.
-RUN echo "--- Starting install of csm_repo ---" && \
-    pip install --no-cache-dir -v -e ./csm_repo && \
-    echo "--- Finished install of csm_repo ---"
-
-
-# ---- 5. The rest of the file (will not be reached if the build fails as expected) ----
+# ---- 5. The rest of the file (will not be reached) ----
 RUN python -c "from generator import load_csm_1b; print('CSM import successful')"
 COPY handler.py ./handler.py
 RUN mkdir -p /workspace/voice_loras /workspace/hf_cache && \
