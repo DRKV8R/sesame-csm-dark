@@ -1,14 +1,12 @@
-# This name will appear in the "Actions" tab of your GitHub repository.
 name: Build and Push Voice and Video Workers
 
-# This workflow runs automatically on a push to the 'main' branch.
 on:
   push:
     branches: [ "main" ]
-  workflow_dispatch: # Allows you to run this workflow manually from the Actions tab.
+  workflow_dispatch:
 
 jobs:
-  # --- JOB 1: Build the Voice Worker ---
+  # --- JOB 1: Build the Voice Worker (with HF Token) ---
   build_voice_worker:
     runs-on: ubuntu-latest
     steps:
@@ -21,9 +19,7 @@ jobs:
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
-          # This line requires a secret named DOCKERHUB_USERNAME
           username: ${{ secrets.DOCKERHUB_USERNAME }}
-          # This line requires a secret named DOCKERHUB_TOKEN
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push voice_worker
@@ -32,10 +28,16 @@ jobs:
           context: ./voice_worker
           file: ./voice_worker/Dockerfile
           push: true
-          # This line ALSO requires the DOCKERHUB_USERNAME secret to create the tag
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/voice-worker:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          # --- THIS IS THE KEY CHANGE ---
+          # This 'secrets' block passes your GitHub Secret named HF_TOKEN
+          # to the Dockerfile's secret mount point named 'huggingface_token'.
+          secrets: |
+            "huggingface_token=${{ secrets.HF_TOKEN }}"
 
-  # --- JOB 2: Build the Video Worker ---
+  # --- JOB 2: Build the Video Worker (no change needed) ---
   build_video_worker:
     runs-on: ubuntu-latest
     steps:
@@ -58,4 +60,6 @@ jobs:
           file: ./video_worker/Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/video-worker:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
           
