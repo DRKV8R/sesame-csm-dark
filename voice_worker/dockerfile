@@ -1,4 +1,6 @@
-# Dockerfile for Voice Generation Service (sesame-csm)
+# --- ULTIMATE DEBUGGING Dockerfile for Voice Generation Service ---
+# This version separates pip installs with verbose logging to find the exact conflict.
+
 FROM runpod/pytorch:2.2.1-py3.10-cuda12.1.1-devel-ubuntu22.04
 WORKDIR /app
 
@@ -9,7 +11,7 @@ RUN apt-get update && apt-get install -y \
 
 # ---- 2. Set Environment Variables ----
 ENV NO_TORCH_COMPILE=1
-ENV PYTHONPATH=/app:/app/csm_repo:$PYTHONPATH
+ENV PYTHONPATH=/app:/app/csm_repo
 ENV VOICE_MODEL_REPO=sesame/csm-1b
 ENV FFMPEG_BINARY=/usr/bin/ffmpeg
 ENV TORCHAUDIO_BACKEND=ffmpeg
@@ -18,23 +20,30 @@ ENV HF_HOME=/workspace/hf_cache
 # ---- 3. Clone CSM Repo First ----
 RUN git clone https://github.com/SesameAILabs/csm.git csm_repo
 
-# ---- 4. Install ALL Python Dependencies at Once (KEY FIX) ----
+# ---- 4. Install Dependencies Separately for MAXIMUM Debug Output ----
 COPY requirements.txt .
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt -e ./csm_repo && \
-    rm -rf ~/.cache/pip
+RUN pip install --no-cache-dir --upgrade pip
 
-# ---- 5. Verification Step ----
+# --- DEBUG STEP 1 ---
+# Install your requirements FIRST with verbose logging.
+# This step should succeed.
+RUN echo "--- Starting install of requirements.txt ---" && \
+    pip install --no-cache-dir -v -r requirements.txt && \
+    echo "--- Finished install of requirements.txt ---"
+
+# --- DEBUG STEP 2 ---
+# NOW, try to install the CSM repo.
+# This is the step we expect to FAIL. The verbose log will tell us why.
+RUN echo "--- Starting install of csm_repo ---" && \
+    pip install --no-cache-dir -v -e ./csm_repo && \
+    echo "--- Finished install of csm_repo ---"
+
+
+# ---- 5. The rest of the file (will not be reached if the build fails as expected) ----
 RUN python -c "from generator import load_csm_1b; print('CSM import successful')"
-
-# ---- 6. Copy Application Code ----
 COPY handler.py ./handler.py
-
-# ---- 7. Create Workspace and Set User ----
 RUN mkdir -p /workspace/voice_loras /workspace/hf_cache && \
     useradd -m -u 1000 -s /bin/bash runpod && \
     chown -R runpod:runpod /app /workspace
 USER runpod
-
-# ---- 8. Run the Application Handler ----
 CMD ["python", "-u", "handler.py"]
