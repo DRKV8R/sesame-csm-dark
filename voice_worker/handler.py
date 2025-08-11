@@ -3,187 +3,120 @@ import sys
 import base64
 import tempfile
 import logging
-import json
 import time
-from typing import Dict, Any, Optional, List
+from typing import Dict, Any, List
 import runpod
 import torch
-import numpy as np
-from io import BytesIO
+import torchaudio
+from faster_whisper import WhisperModel
+from transformers import CsmForConditionalGeneration, AutoProcessor
 
-# Voice processing imports
-try:
-    import torchaudio
-    import librosa
-    import soundfile as sf
-    import whisper
-    from generator import load_csm_1b, Segment
-    from peft import LoraConfig, get_peft_model, TaskType, PeftModel
-except ImportError as e:
-    logging.error(f"Voice processing imports failed: {e}")
-    sys.exit(1)
-
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
+# --- Logging Setup ---
+logging.basicConfig(level=os.getenv("LOG_LEVEL", "INFO"))
 logger = logging.getLogger(__name__)
 
-# Global model instances
+# --- Global Model Instances ---
 VOICE_MODEL = None
+PROCESSOR = None
 WHISPER_MODEL = None
-LORA_ADAPTERS = {}
-GENERATION_COUNT = 0
 
+# --- Main Worker Class ---
 class VoiceWorker:
-    """Sesame CSM voice training and generation worker"""
-    
     def __init__(self):
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        self.model_repo = os.getenv('VOICE_MODEL_REPO', 'BiggestLab/csm-1b')
-        self.generation_limit = int(os.getenv('GENERATION_LIMIT', 200))
-        self.max_length_ms = int(os.getenv('MAX_LENGTH_MS', 30000))
-        
-    def init_voice_model(self):
-        """Initialize Sesame CSM model"""
-        global VOICE_MODEL
-        
-        if VOICE_MODEL is not None:
-            return VOICE_MODEL
-        
-        try:
-            logger.info(f"Loading Sesame CSM from {self.model_repo}")
-            VOICE_MODEL = load_csm_1b(device=self.device, repo=self.model_repo)
-            VOICE_MODEL.eval()
-            
-            if self.device == "cuda":
-                torch.backends.cudnn.benchmark = True
-                torch.cuda.empty_cache()
-            
-            logger.info("Voice model loaded successfully")
-            return VOICE_MODEL
-            
-        except Exception as e:
-            logger.error(f"Voice model initialization failed: {e}")
-            raise
-    
-    def init_whisper_model(self):
-        """Initialize Whisper for transcription"""
-        global WHISPER_MODEL
-        
-        if WHISPER_MODEL is not None:
-            return WHISPER_MODEL
-        
-        try:
-            logger.info("Loading Whisper model")
-            WHISPER_MODEL = whisper.load_model("base", device=self.device)
-            logger.info("Whisper model loaded successfully")
-            return WHISPER_MODEL
-            
-        except Exception as e:
-            logger.error(f"Whisper initialization failed: {e}")
-            raise
-    
-    def transcribe_audio(self, audio_b64: str) -> Dict[str, Any]:
-        """Transcribe audio using Whisper"""
-        try:
-            audio_bytes = base64.b64decode(audio_b64)
-            with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as tmp_file:
-                tmp_file.write(audio_bytes)
-                temp_path = tmp_file.name
-            
-            whisper_model = self.init_whisper_model()
-            result = whisper_model.transcribe(temp_path)
-            os.unlink(temp_path)
-            
-            return {
-                "text": result["text"],
-                "language": result["language"],
-                "segments": result["segments"]
-            }
-            
-        except Exception as e:
-            logger.error(f"Transcription failed: {e}")
-            raise
-    
-    def prepare_training_data(self, audio_b64: str, text: str = None) -> Dict[str, Any]:
-        """Prepare audio data for LoRA training"""
-        try:
-            logger.info("Preparing voice training data")
-            audio_bytes = base64.b64decode(audio_b64)
-            with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as tmp_file:
-                tmp_file.write(audio_bytes)
-                temp_path = tmp_file.name
-            
-            audio, sr = librosa.load(temp_path, sr=24000, mono=True)
-            duration = len(audio) / sr
-            
-            if duration < 30:
-                raise ValueError("Audio must be at least 30 seconds for LoRA training")
-            
-            if not text:
-                transcription = self.transcribe_audio(audio_b64)
-                text = transcription["text"]
-            
-            audio = librosa.util.normalize(audio)
-            audio_tensor = torch.from_numpy(audio).float()
-            os.unlink(temp_path)
-            
-            return {
-                "audio_tensor": audio_tensor,
-                "text": text,
-                "duration": duration,
-                "sample_rate": sr,
-                "status": "ready"
-            }
-            
-        except Exception as e:
-            logger.error(f"Training data preparation failed: {e}")
-            raise
-    
-    def train_voice_lora(self, training_data: Dict[str, Any], voice_name: str) -> Dict[str, Any]:
-        """Train LoRA adapter for voice cloning"""
-        logger.info(f"Starting LoRA training for voice: {voice_name}")
-        # Placeholder for actual training logic
-        time.sleep(5) # Simulate training time
-        lora_id = f"voice_{voice_name}_{int(time.time())}"
-        LORA_ADAPTERS[lora_id] = {"name": voice_name}
-        return {"status": "success", "lora_id": lora_id}
+        self.model_id = "sesame/csm-1b"
+        self.whisper_model_size = "base"
 
-    def generate_voice(self, text: str, voice_lora: str = None, speaker_id: int = 0) -> Dict[str, Any]:
-        """Generate voice with optional LoRA"""
-        global GENERATION_COUNT
-        if GENERATION_COUNT >= self.generation_limit:
-            return {"error": "Generation limit reached"}
+    def init_models(self):
+        """Initializes CSM, Processor, and Whisper models if not loaded."""
+        global VOICE_MODEL, PROCESSOR, WHISPER_MODEL
         
-        logger.info(f"Generating voice: '{text[:50]}...'")
-        model = self.init_voice_model()
+        if VOICE_MODEL is None or PROCESSOR is None:
+            logger.info(f"Loading Sesame CSM model and processor from '{self.model_id}'...")
+            PROCESSOR = AutoProcessor.from_pretrained(self.model_id)
+            VOICE_MODEL = CsmForConditionalGeneration.from_pretrained(self.model_id, device_map=self.device)
+            logger.info("Sesame CSM model and processor loaded successfully.")
+
+        if WHISPER_MODEL is None:
+            logger.info(f"Loading faster-whisper model '{self.whisper_model_size}'...")
+            compute_type = "float16" if self.device == "cuda" else "float32"
+            WHISPER_MODEL = WhisperModel(self.whisper_model_size, device=self.device, compute_type=compute_type)
+            logger.info("faster-whisper model loaded successfully.")
+
+    def generate_voice(self, text_prompt: str, context_history: List[Dict], speaker_id: int) -> Dict[str, Any]:
+        """Generates voice using the official Hugging Face CSM implementation."""
+        self.init_models()
         
-        audio = model.generate(text=text, speaker=speaker_id)
+        conversation = []
         
-        with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as tmp_file:
-            torchaudio.save(tmp_file.name, audio.unsqueeze(0).cpu(), 24000)
-            with open(tmp_file.name, 'rb') as f:
-                audio_b64 = base64.b64encode(f.read()).decode('utf-8')
-            os.unlink(tmp_file.name)
+        # 1. Build the context from history
+        for turn in context_history:
+            if "audio_b64" in turn and turn["audio_b64"]:
+                try:
+                    # Decode and load audio from base64
+                    audio_bytes = base64.b64decode(turn["audio_b64"])
+                    with tempfile.NamedTemporaryFile(suffix=".wav") as tmp_file:
+                        tmp_file.write(audio_bytes)
+                        tmp_file.seek(0)
+                        # Use the processor's feature extractor to load the audio
+                        audio_array, sr = torchaudio.load(tmp_file.name)
+                    
+                    conversation.append({
+                        "role": f"{turn.get('speaker', 0)}",
+                        "content": [
+                            {"type": "text", "text": turn.get("text", "")},
+                            {"type": "audio", "path": audio_array.numpy()} # Pass the numpy array
+                        ],
+                    })
+                except Exception as e:
+                    logger.error(f"Failed to process context turn: {e}")
+
+        # 2. Add the final text prompt
+        conversation.append({
+            "role": f"{speaker_id}",
+            "content": [{"type": "text", "text": text_prompt}]
+        })
         
-        GENERATION_COUNT += 1
+        logger.info(f"Generating audio with {len(conversation)} turns in total.")
+        
+        # Process the entire conversation using the new chat template format
+        inputs = PROCESSOR.apply_chat_template(
+            conversation,
+            tokenize=True,
+            return_dict=True,
+        ).to(self.device)
+
+        # Infer the model
+        audio = VOICE_MODEL.generate(**inputs, output_audio=True)
+        
+        # Save the audio to a base64 string
+        with tempfile.NamedTemporaryFile(suffix=".wav") as tmp_file:
+            PROCESSOR.save_audio(audio, tmp_file.name)
+            tmp_file.seek(0)
+            audio_b64 = base64.b64encode(tmp_file.read()).decode('utf-8')
+            
+        logger.info("Voice generation successful.")
         return {"audio_base64": audio_b64}
 
+# --- RunPod Handler ---
 worker = VoiceWorker()
 
 def handler(event: Dict[str, Any]) -> Dict[str, Any]:
-    """Main RunPod handler for voice operations"""
+    """Main RunPod handler for voice operations."""
     inp = event.get('input', {})
-    action = inp.get('action', 'generate_voice')
     
-    if action == 'generate_voice':
-        return worker.generate_voice(inp.get('text', ''))
-    elif action == 'train_lora':
-        return worker.train_voice_lora(inp, inp.get('voice_name', 'default'))
-    # ... add other actions
-    return {"error": f"Unknown action: {action}"}
+    try:
+        text = inp.get('text')
+        context_history = inp.get('context_history', [])
+        speaker_id = inp.get('speaker_id', 0)
+        
+        if not text:
+            return {"error": "Input 'text' is required."}
+        
+        return worker.generate_voice(text, context_history, speaker_id)
 
-if __name__ == "__main__":
-    runpod.serverless.start({"handler": handler})
+    except Exception as e:
+        logger.exception("Error during voice generation")
+        return {"error": str(e)}
+
+runpod.serverless.start({"handler": handler})
